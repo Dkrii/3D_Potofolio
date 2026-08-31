@@ -3,7 +3,7 @@ import type { BmsPart } from '../../store/portfolioStore'
 import { usePortfolioStore } from '../../store/portfolioStore'
 
 const sectionIds = { about: 'SEC-01', computerVision: 'SEC-02', bms: 'SEC-03', website: 'SEC-04', chatbot: 'SEC-05' }
-const bmsParts: BmsPart[] = [1, 2, 3, 4]
+const bmsParts: BmsPart[] = [1, 2, 3]
 
 export function PortfolioPanel() {
   const activeSection = usePortfolioStore((state) => state.activeSection)
@@ -31,7 +31,7 @@ export function PortfolioPanel() {
           <div className="bms-part-controls" aria-label="BMS part selector">
             {bmsParts.map((part) => <button key={part} type="button" aria-pressed={activeBmsPart === part} onClick={() => setBmsPart(part)}>Part {String(part).padStart(2, '0')}</button>)}
           </div>
-          <p className="bms-part-state" aria-live="polite">{activeBmsPart ? `Part ${String(activeBmsPart).padStart(2, '0')} selected · Details coming soon` : 'Choose Part 01–04 to inspect its model segment.'}</p>
+          <p className="bms-part-state" aria-live="polite">{activeBmsPart ? `Part ${String(activeBmsPart).padStart(2, '0')} selected · Details coming soon` : 'Choose Part 01–03 to inspect its model segment.'}</p>
         </div>
       )}
       {content.tags && <div className="detail-block"><h2>Stack / Capabilities</h2><ul className="tag-list">{content.tags.map((tag) => <li key={tag}>{tag}</li>)}</ul></div>}

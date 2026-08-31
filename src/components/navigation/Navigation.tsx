@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { BmsPart, PortfolioSection } from '../../store/portfolioStore'
+import type { PortfolioSection } from '../../store/portfolioStore'
 import { usePortfolioStore } from '../../store/portfolioStore'
 
 const projects: { label: string; section: Exclude<PortfolioSection, 'overview' | 'about'>; code: string }[] = [
@@ -9,13 +9,9 @@ const projects: { label: string; section: Exclude<PortfolioSection, 'overview' |
   { label: 'Chatbot', section: 'chatbot', code: 'CB' },
 ]
 
-const bmsParts: BmsPart[] = [1, 2, 3, 4]
-
 export function Navigation() {
   const activeSection = usePortfolioStore((state) => state.activeSection)
-  const activeBmsPart = usePortfolioStore((state) => state.activeBmsPart)
   const openSection = usePortfolioStore((state) => state.openSection)
-  const setBmsPart = usePortfolioStore((state) => state.setBmsPart)
   const closeSection = usePortfolioStore((state) => state.closeSection)
   const projectActive = projects.some((item) => item.section === activeSection)
   const [projectsOpen, setProjectsOpen] = useState(projectActive)
@@ -38,11 +34,6 @@ export function Navigation() {
             <button type="button" aria-current={activeSection === item.section} onClick={() => openSection(item.section)}>
               <span>{item.code}</span>{item.label}
             </button>
-            {item.section === 'bms' && activeSection === 'bms' && <div className="bms-part-nav" aria-label="BMS parts">
-              {bmsParts.map((part) => <button key={part} type="button" aria-pressed={activeBmsPart === part} onClick={() => setBmsPart(part)}>
-                <span>{String(part).padStart(2, '0')}</span>Part {String(part).padStart(2, '0')}
-              </button>)}
-            </div>}
           </div>)}
         </div>}
       </div>

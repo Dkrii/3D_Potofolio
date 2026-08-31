@@ -3,6 +3,9 @@ import { create } from 'zustand'
 export type PortfolioSection = 'overview' | 'about' | 'computerVision' | 'bms' | 'website' | 'chatbot'
 export type BmsPart = 1 | 2 | 3 | 4
 
+export type HotspotSection = Exclude<PortfolioSection, 'overview'>
+export type HotspotOffset = { x: number; y: number; z: number }
+
 export interface SceneSettings {
   exposure: number
   ambient: number
@@ -12,6 +15,7 @@ export interface SceneSettings {
   background: string
   overlay: number
   bmsFloorGap: number
+  hotspotOffsets: Record<HotspotSection, HotspotOffset>
 }
 
 export const defaultSceneSettings: SceneSettings = {
@@ -23,6 +27,13 @@ export const defaultSceneSettings: SceneSettings = {
   background: '#070b12',
   overlay: 0.18,
   bmsFloorGap: 2.5,
+  hotspotOffsets: {
+    about: { x: 0, y: 0, z: 0 },
+    computerVision: { x: 0, y: 0, z: 0 },
+    bms: { x: 0, y: 0, z: 0 },
+    website: { x: 0, y: 0, z: 0 },
+    chatbot: { x: 0, y: 0, z: 0 },
+  },
 }
 
 const loadSceneSettings = (): SceneSettings => {
@@ -71,7 +82,7 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
     set({ sceneSettings: defaultSceneSettings })
   },
   toggleSceneControls: () => set((state) => ({ isSceneControlsOpen: !state.isSceneControlsOpen })),
-  openSection: (activeSection) => set({ activeSection, activeBmsPart: null, isPanelOpen: true }),
+  openSection: (activeSection) => set({ activeSection, activeBmsPart: activeSection === 'bms' ? 1 : null, isPanelOpen: true }),
   setBmsPart: (activeBmsPart) => set({ activeBmsPart, activeSection: 'bms', isPanelOpen: true }),
   closeSection: () => set({ activeSection: 'overview', activeBmsPart: null, isPanelOpen: false }),
   setHoveredObject: (hoveredObject) => set({ hoveredObject }),

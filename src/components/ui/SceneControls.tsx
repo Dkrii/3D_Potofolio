@@ -1,6 +1,10 @@
-import { defaultSceneSettings, type SceneSettings, usePortfolioStore } from '../../store/portfolioStore'
+import { useState } from 'react'
+import { defaultSceneSettings, type HotspotSection, type SceneSettings, usePortfolioStore } from '../../store/portfolioStore'
 
-const sliders: { key: Exclude<keyof SceneSettings, 'background'>; label: string; min: number; max: number; step: number }[] = [
+const hotspotLabels: Record<HotspotSection, string> = { about: 'About', computerVision: 'Computer Vision', bms: 'BMS', website: 'Website', chatbot: 'Chatbot' }
+const hotspotSections = Object.keys(hotspotLabels) as HotspotSection[]
+
+const sliders: { key: Exclude<keyof SceneSettings, 'background' | 'hotspotOffsets'>; label: string; min: number; max: number; step: number }[] = [
   { key: 'exposure', label: 'Exposure', min: 0.5, max: 2.5, step: 0.05 },
   { key: 'ambient', label: 'Ambient', min: 0, max: 6, step: 0.1 },
   { key: 'hemisphere', label: 'Hemisphere', min: 0, max: 6, step: 0.1 },
@@ -11,6 +15,7 @@ const sliders: { key: Exclude<keyof SceneSettings, 'background'>; label: string;
 ]
 
 export function SceneControls() {
+  const [hotspotSection, setHotspotSection] = useState<HotspotSection>('about')
   const settings = usePortfolioStore((state) => state.sceneSettings)
   const isOpen = usePortfolioStore((state) => state.isSceneControlsOpen)
   const setSetting = usePortfolioStore((state) => state.setSceneSetting)
@@ -32,6 +37,13 @@ export function SceneControls() {
           <span>Background<output>{settings.background}</output></span>
           <input type="color" value={settings.background} onChange={(event) => setSetting('background', event.target.value)} />
         </label>
+        <div className="hotspot-controls">
+          <label><span>Object label</span><select value={hotspotSection} onChange={(event) => setHotspotSection(event.target.value as HotspotSection)}>{hotspotSections.map((section) => <option key={section} value={section}>{hotspotLabels[section]}</option>)}</select></label>
+          {(['x', 'y', 'z'] as const).map((axis) => <label key={axis}>
+            <span>Position {axis.toUpperCase()}<output>{settings.hotspotOffsets[hotspotSection][axis].toFixed(2)}</output></span>
+            <input type="range" min="-5" max="5" step="0.05" value={settings.hotspotOffsets[hotspotSection][axis]} onChange={(event) => setSetting('hotspotOffsets', { ...settings.hotspotOffsets, [hotspotSection]: { ...settings.hotspotOffsets[hotspotSection], [axis]: Number(event.target.value) } })} />
+          </label>)}
+        </div>
         <button className="bright-preset" type="button" onClick={() => {
           setSetting('exposure', 1.35)
           setSetting('ambient', 3)

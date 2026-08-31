@@ -73,6 +73,11 @@ button:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; }
 .intro-prompt i { width: 20px; height: 1px; background: var(--acid); }
 .scene-hint { position: absolute; z-index: 2; right: 24px; bottom: 18px; margin: 0; color: var(--dim); font: .54rem var(--mono); text-transform: uppercase; }
 .scene-hint span { color: var(--ink); }
+.object-hotspot { display: flex; align-items: center; gap: 10px; width: max-content; min-height: 42px; padding: 9px 14px; border: 1px solid rgba(180,205,194,.45); border-radius: 7px; color: var(--ink); background: rgba(8,12,11,.92); box-shadow: 0 8px 24px rgba(0,0,0,.55); backdrop-filter: blur(10px); cursor: pointer; transition: border-color .2s, background .2s, transform .2s; }
+.object-hotspot i { flex: 0 0 auto; width: 10px; height: 10px; border-radius: 50%; background: var(--acid); box-shadow: 0 0 12px rgba(199,243,107,.9); }
+.object-hotspot span { color: var(--ink); font: 500 .72rem var(--mono); letter-spacing: .02em; white-space: nowrap; }
+.object-hotspot:hover, .object-hotspot:focus-visible { border-color: var(--acid); background: rgba(16,24,20,.96); transform: translateY(-2px); }
+.object-hotspot:hover i, .object-hotspot:focus-visible i { transform: scale(1.2); }
 .scene-controls { position: absolute; z-index: 5; right: 20px; bottom: 42px; display: grid; justify-items: end; gap: 8px; }
 .scene-controls-toggle, .bright-preset { min-height: 36px; padding: 0 12px; border: 1px solid var(--line-strong); color: var(--ink); background: rgba(8,12,11,.9); font: .54rem var(--mono); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; }
 .scene-controls-toggle:hover, .bright-preset:hover { border-color: var(--acid); color: var(--acid); }
@@ -85,6 +90,8 @@ button:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; }
 .scene-controls-panel input[type=range] { width: 100%; accent-color: var(--acid); cursor: pointer; }
 .scene-controls-panel .color-control { grid-template-columns: 1fr auto; align-items: center; }
 .scene-controls-panel .color-control > span { display: grid; justify-content: start; }
+.hotspot-controls { margin-top: 15px; padding-top: 4px; border-top: 1px solid var(--line); }
+.hotspot-controls select { width: 100%; min-height: 34px; padding: 0 8px; border: 1px solid var(--line-strong); color: var(--ink); background: #101714; font: .55rem var(--mono); }
 .scene-controls-panel input[type=color] { width: 42px; height: 30px; padding: 2px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
 .bright-preset { width: 100%; margin-top: 15px; }
 .camera-dev-toggle { position: absolute; z-index: 6; top: 64px; left: 18px; min-height: 36px; padding: 0 12px; border: 1px solid #ffb84d66; color: #ffb84d; background: rgba(8,12,11,.92); font: .54rem var(--mono); text-transform: uppercase; letter-spacing: .08em; cursor: pointer; }
@@ -119,7 +126,7 @@ button:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; }
 .status-note span { color: var(--dim); font: .5rem var(--mono); text-transform: uppercase; } .status-note strong { font: 600 .72rem var(--display); letter-spacing: .08em; } .status-note small { color: var(--muted); font-size: .56rem; line-height: 1.45; }
 
 .content-layer { position: absolute; z-index: 14; inset: 68px 0 32px 204px; pointer-events: none; }
-.portfolio-panel { position: absolute; right: 0; top: 0; width: min(430px, 52%); height: 100%; padding: 26px 30px 40px; overflow-y: auto; pointer-events: auto; border-left: 1px solid var(--line-strong); background: rgba(10,15,13,.95); box-shadow: -30px 0 80px rgba(0,0,0,.38); backdrop-filter: blur(22px); animation: panel-in .45s cubic-bezier(.2,.8,.2,1) both; }
+.portfolio-panel { position: absolute; right: 0; top: 0; width: min(600px, 65%); height: 100%; padding: 26px 30px 40px; overflow-y: auto; pointer-events: auto; border-left: 1px solid var(--line-strong); background: rgba(10,15,13,.95); box-shadow: -30px 0 80px rgba(0,0,0,.38); backdrop-filter: blur(22px); animation: panel-in .45s cubic-bezier(.2,.8,.2,1) both; }
 .detail-header { display: flex; justify-content: space-between; align-items: center; color: var(--dim); font: .54rem var(--mono); letter-spacing: .1em; }
 .panel-close { width: 34px; height: 34px; border: 1px solid var(--line); color: var(--ink); background: transparent; font-size: 1.25rem; cursor: pointer; transition: border-color .2s, color .2s, transform .2s; }
 .panel-close:hover { color: var(--acid); border-color: var(--acid); transform: rotate(90deg); }

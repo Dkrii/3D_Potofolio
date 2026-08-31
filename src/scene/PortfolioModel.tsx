@@ -1,8 +1,8 @@
 import gsap from 'gsap'
-import { useGLTF } from '@react-three/drei'
+import { Html, useGLTF } from '@react-three/drei'
 import { useThree, type ThreeEvent } from '@react-three/fiber'
 import { useEffect, useMemo, useRef } from 'react'
-import { Color, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
+import { Box3, Color, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { interactiveMappings, type InteractiveMapping } from '../data/interactiveMappings'
 import { usePortfolioStore, type PortfolioSection } from '../store/portfolioStore'
 
@@ -23,8 +23,27 @@ export function PortfolioModel() {
   const gltf = useGLTF(modelUrl)
   const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene])
   const invalidate = useThree((state) => state.invalidate)
+  const hotspots = useMemo(() => {
+    scene.updateMatrixWorld(true)
+    const bounds = new Map<Exclude<PortfolioSection, 'overview'>, Box3>()
+    scene.traverse((object) => {
+      if (!(object instanceof Mesh)) return
+      const mapping = findMapping(object)
+      if (!mapping) return
+      const sectionBounds = bounds.get(mapping.section) ?? new Box3()
+      sectionBounds.expandByObject(object)
+      bounds.set(mapping.section, sectionBounds)
+    })
+    return [...bounds].map(([section, box]) => {
+      const position = box.getCenter(new Vector3())
+      position.y = box.max.y + 0.25
+      return { section, position, label: section === 'bms' ? 'BMS' : interactiveMappings.find((mapping) => mapping.section === section)?.label ?? section }
+    })
+  }, [scene])
   const activeSection = usePortfolioStore((state) => state.activeSection)
+  const activeBmsPart = usePortfolioStore((state) => state.activeBmsPart)
   const bmsFloorGap = usePortfolioStore((state) => state.sceneSettings.bmsFloorGap)
+  const hotspotOffsets = usePortfolioStore((state) => state.sceneSettings.hotspotOffsets)
   const openSection = usePortfolioStore((state) => state.openSection)
   const setBmsPart = usePortfolioStore((state) => state.setBmsPart)
   const setHoveredObject = usePortfolioStore((state) => state.setHoveredObject)
@@ -61,20 +80,14 @@ export function PortfolioModel() {
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const expanded = activeSection === 'bms'
-    const worldOffsets: Record<number, number> = {
-      1: bmsFloorGap * 3,
-      2: bmsFloorGap * 2,
-      3: bmsFloorGap,
-      4: 0,
-    }
+    const expanded = activeSection === 'bms' && activeBmsPart !== null
     scene.updateMatrixWorld(true)
     const tweens = [...bmsObjects.current.entries()].flatMap(([part, entries]) => entries.map((entry) => {
       const parent = entry.object.parent
       const localOffset = new Vector3()
-      if (expanded && parent) {
+      if (expanded && activeBmsPart === part && parent) {
         const worldOrigin = parent.localToWorld(entry.initial.clone())
-        const worldTarget = worldOrigin.clone().add(new Vector3(0, worldOffsets[part], 0))
+        const worldTarget = worldOrigin.clone().add(new Vector3(0, bmsFloorGap, 0))
         localOffset.copy(parent.worldToLocal(worldTarget)).sub(entry.initial)
       }
       return gsap.to(entry.object.position, {
@@ -89,7 +102,7 @@ export function PortfolioModel() {
       })
     }))
     return () => tweens.forEach((tween) => tween.kill())
-  }, [activeSection, bmsFloorGap, invalidate, scene])
+  }, [activeBmsPart, activeSection, bmsFloorGap, invalidate, scene])
 
   const highlight = (section: PortfolioSection | null) => {
     if (highlightedSection.current === section) return
@@ -135,7 +148,19 @@ export function PortfolioModel() {
 
   useEffect(() => () => { document.body.style.cursor = 'default' }, [])
 
-  return <primitive object={scene} onPointerMove={onPointerMove} onPointerOut={onPointerOut} onClick={onClick} />
+  return (
+    <>
+      <primitive object={scene} onPointerMove={onPointerMove} onPointerOut={onPointerOut} onClick={onClick} />
+      {activeSection === 'overview' && hotspots.map((hotspot) => (
+        <Html key={hotspot.section} position={hotspot.position.clone().add(hotspotOffsets[hotspot.section])} center occlude zIndexRange={[10, 0]}>
+          <button className="object-hotspot" type="button" onClick={() => openSection(hotspot.section)} aria-label={`Open ${hotspot.label}`}>
+            <i aria-hidden="true" />
+            <span>{hotspot.label}</span>
+          </button>
+        </Html>
+      ))}
+    </>
+  )
 }
 
 useGLTF.preload(modelUrl)
