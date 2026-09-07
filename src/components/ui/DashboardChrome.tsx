@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { FileText, GitBranch, Menu, X, CheckCircle2, Activity } from 'lucide-react'
+import { FileText, GitBranch, Menu, X, CheckCircle2, Activity, Languages } from 'lucide-react'
 import { usePortfolioStore } from '../../store/portfolioStore'
 
 export function DashboardHeader() {
+  const language = usePortfolioStore((state) => state.language)
+  const setLanguage = usePortfolioStore((state) => state.setLanguage)
   const closeSection = usePortfolioStore((state) => state.closeSection)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  const isId = language === 'id'
 
   return (
     <header className="dashboard-header">
@@ -27,7 +31,7 @@ export function DashboardHeader() {
         onFocus={(e) => (e.target.style.top = '10px')}
         onBlur={(e) => (e.target.style.top = '-40px')}
       >
-        Skip to Content
+        {isId ? 'Lewati ke Konten' : 'Skip to Content'}
       </a>
 
       {/* Brand Identity */}
@@ -36,17 +40,71 @@ export function DashboardHeader() {
         <span>Software Engineer / Model-led Portfolio</span>
       </div>
 
-      {/* Desktop Multi-action Header Bar */}
-      <div className="desktop-header-actions">
+      {/* Desktop Multi-action Header Bar (Sisi Kanan) */}
+      <div className="desktop-header-actions" style={{ marginLeft: 'auto' }}>
+        {/* Language Switcher Pill (Paling Kiri di Bar Kanan) */}
+        <div
+          className="lang-switcher-pill"
+          role="group"
+          aria-label="Language Switcher"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            background: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '20px',
+            padding: '2px 4px',
+            gap: '2px',
+          }}
+        >
+          <Languages size={14} color="#94a3b8" style={{ marginLeft: '4px', marginRight: '2px' }} />
+          <button
+            type="button"
+            className={`lang-btn ${language === 'id' ? 'active' : ''}`}
+            onClick={() => setLanguage('id')}
+            style={{
+              background: language === 'id' ? '#38bdf8' : 'transparent',
+              color: language === 'id' ? '#080c0b' : '#94a3b8',
+              border: 0,
+              padding: '3px 8px',
+              borderRadius: '12px',
+              fontSize: '0.72rem',
+              fontWeight: language === 'id' ? 700 : 500,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            ID
+          </button>
+          <button
+            type="button"
+            className={`lang-btn ${language === 'en' ? 'active' : ''}`}
+            onClick={() => setLanguage('en')}
+            style={{
+              background: language === 'en' ? '#38bdf8' : 'transparent',
+              color: language === 'en' ? '#080c0b' : '#94a3b8',
+              border: 0,
+              padding: '3px 8px',
+              borderRadius: '12px',
+              fontSize: '0.72rem',
+              fontWeight: language === 'en' ? 700 : 500,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            EN
+          </button>
+        </div>
+
         <div className="status-badge">
           <span className="pulse-dot"></span>
-          <span>AVAILABLE FOR HIRE</span>
+          <span>{isId ? 'TERSEDIA UNTUK KERJA' : 'AVAILABLE FOR HIRE'}</span>
         </div>
 
         <a
           href="https://github.com"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           aria-label="GitHub Profile"
           className="header-ghost-btn"
         >
@@ -61,34 +119,77 @@ export function DashboardHeader() {
           className="header-primary-btn"
         >
           <FileText size={14} color="#080c0b" />
-          <span>Download CV</span>
+          <span>{isId ? 'Unduh CV' : 'Download CV'}</span>
         </a>
       </div>
 
       {/* Mobile Single Menu Icon (<768px) */}
-      <button
-        className="mobile-menu-btn"
-        type="button"
-        aria-label="Open actions menu"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-      >
-        {mobileMenuOpen ? <X size={20} color="#38bdf8" /> : <Menu size={20} color="#38bdf8" />}
-      </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        
+        <button
+          className="mobile-menu-btn"
+          type="button"
+          aria-label="Open actions menu"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={20} color="#38bdf8" /> : <Menu size={20} color="#38bdf8" />}
+        </button>
+      </div>
 
       {/* Mobile Compact Dropdown / Sheet */}
       {mobileMenuOpen && (
         <div className="mobile-menu-dropdown" onClick={() => setMobileMenuOpen(false)}>
           <div className="mobile-menu-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="mobile-sheet-header">
-              <span>QUICK ACTIONS</span>
+              <span>{isId ? 'MENU CEPAT' : 'QUICK ACTIONS'}</span>
               <button type="button" onClick={() => setMobileMenuOpen(false)} style={{ background: 'transparent', border: 0, color: '#94a3b8' }}>
                 <X size={18} />
               </button>
             </div>
 
+            {/* Mobile Language Switcher */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 12px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px', margin: '6px 0 12px' }}>
+              <span style={{ fontSize: '0.8rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Languages size={15} color="#38bdf8" />
+                {isId ? 'Bahasa / Language' : 'Language / Bahasa'}
+              </span>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                <button
+                  type="button"
+                  onClick={() => setLanguage('id')}
+                  style={{
+                    background: language === 'id' ? '#38bdf8' : 'rgba(255, 255, 255, 0.06)',
+                    color: language === 'id' ? '#080c0b' : '#94a3b8',
+                    border: 0,
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  ID
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLanguage('en')}
+                  style={{
+                    background: language === 'en' ? '#38bdf8' : 'rgba(255, 255, 255, 0.06)',
+                    color: language === 'en' ? '#080c0b' : '#94a3b8',
+                    border: 0,
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  EN
+                </button>
+              </div>
+            </div>
+
             <div className="mobile-sheet-status">
               <CheckCircle2 size={16} color="#4ade80" />
-              <span>Available for Hire (Full-time / Contract)</span>
+              <span>{isId ? 'Tersedia untuk Kerja (Full-time / Kontrak)' : 'Available for Hire (Full-time / Contract)'}</span>
             </div>
 
             <div className="mobile-sheet-links">
@@ -99,13 +200,13 @@ export function DashboardHeader() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <FileText size={16} color="#080c0b" />
-                <span>Download CV (ATS)</span>
+                <span>{isId ? 'Unduh CV (ATS)' : 'Download CV (ATS)'}</span>
               </a>
 
               <a
                 href="https://github.com"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 className="mobile-sheet-github-btn"
                 onClick={() => setMobileMenuOpen(false)}
               >

@@ -5,7 +5,6 @@ import './App.css'
 import { Navigation, projectConfig } from './components/navigation/Navigation'
 import { PortfolioPanel } from './components/panels/PortfolioPanel'
 import { DashboardHeader, StatusBar } from './components/ui/DashboardChrome'
-import { CameraDevControls } from './components/ui/CameraDevControls'
 import { LoadingOverlay, SceneLoader } from './components/ui/Loading'
 import { SceneControls } from './components/ui/SceneControls'
 import { Tooltip } from './components/ui/Tooltip'
@@ -15,21 +14,23 @@ import { usePortfolioStore } from './store/portfolioStore'
 import { useCameraDevStore } from './store/cameraDevStore'
 
 function App() {
+  const language = usePortfolioStore((state) => state.language)
   const activeSection = usePortfolioStore((state) => state.activeSection)
   const isPanelOpen = usePortfolioStore((state) => state.isPanelOpen)
+  const isSceneReady = usePortfolioStore((state) => state.isSceneReady)
   const openSection = usePortfolioStore((state) => state.openSection)
   const overlay = usePortfolioStore((state) => state.sceneSettings.overlay)
+
+  const isId = language === 'id'
 
   // Mobile Viewport detection (<768px)
   const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false))
   const [showMobile3D, setShowMobile3D] = useState(false)
 
-  // Mobile First-Time Recommendation Modal State
+  // Mobile First-Time Recommendation Modal State (Show when in mobile view)
   const [showMobileNotice, setShowMobileNotice] = useState(() => {
     if (typeof window === 'undefined') return false
-    const isSmall = window.innerWidth < 768
-    const alreadyDismissed = sessionStorage.getItem('mobile_desktop_notice_dismissed')
-    return isSmall && !alreadyDismissed
+    return window.innerWidth < 768
   })
 
   useEffect(() => {
@@ -37,6 +38,13 @@ function App() {
       const mobile = window.innerWidth < 768
       setIsMobile(mobile)
       useCameraDevStore.getState().setViewportMode(mobile ? 'mobile' : 'desktop')
+
+      // When switching to mobile dynamically in Inspect Element
+      if (mobile) {
+        setShowMobileNotice(true)
+      } else {
+        setShowMobileNotice(false)
+      }
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
@@ -44,7 +52,6 @@ function App() {
 
   const dismissMobileNotice = (launch3D = false) => {
     setShowMobileNotice(false)
-    sessionStorage.setItem('mobile_desktop_notice_dismissed', 'true')
     if (launch3D) {
       setShowMobile3D(true)
     }
@@ -131,7 +138,8 @@ function App() {
 
           <WebGLBoundary>
             <Canvas
-              camera={{ position: [9.5, -15.5, 9.5], fov: 38, near: 0.1, far: 500 }}
+              className={`scene-canvas-element ${isSceneReady ? 'canvas-ready' : 'canvas-loading'}`}
+              camera={{ position: [-58, 42, -72], fov: 50, near: 0.1, far: 500 }}
               dpr={[1, 1.5]}
               gl={{ antialias: true, powerPreference: 'high-performance' }}
               frameloop="demand"
@@ -156,7 +164,7 @@ function App() {
                 Dikri<br />
                 <em>Ali</em>
               </h1>
-              <p>Computer vision, building management systems, and web experiences—mapped through an interactive 3D portfolio model.</p>
+              <p>Software engineer focused on building web applications, AI powered systems, and interactive 3D experiences through practical digital solutions.</p>
               <span className="intro-prompt">
                 <i aria-hidden="true" /> Select a model node or use navigation
               </span>
@@ -164,7 +172,6 @@ function App() {
           )}
 
           {!isMobile && <SceneControls />}
-          {!isMobile && import.meta.env.DEV && <CameraDevControls />}
           <p className="scene-hint">
             <span>Drag</span> orbit <span>Scroll</span> zoom <span>Right-drag</span> pan
           </p>
@@ -194,8 +201,8 @@ function App() {
           {/* Project Cards List */}
           <div className="mobile-projects-container">
             <div className="mobile-section-heading">
-              <span>FEATURED WORK</span>
-              <small>04 PROJECTS</small>
+              <span>{isId ? 'PROYEK UNGGULAN' : 'FEATURED WORK'}</span>
+              <small>{isId ? '04 PROYEK' : '04 PROJECTS'}</small>
             </div>
 
             {projectConfig.map((project) => {
@@ -212,12 +219,12 @@ function App() {
                     </div>
                     <div>
                       <span className="mobile-card-code">{project.code}</span>
-                      <h2 className="mobile-card-title">{project.label}</h2>
+                      <h2 className="mobile-card-title">{project.labels[language]}</h2>
                     </div>
                   </div>
-                  <p className="mobile-card-tagline">{project.tagline}</p>
+                  <p className="mobile-card-tagline">{project.taglines[language]}</p>
                   <div className="mobile-card-cta">
-                    <span>View Project Details & Flow →</span>
+                    <span>{isId ? 'Lihat Detail & Diagram Flow →' : 'View Project Details & Flow →'}</span>
                   </div>
                 </div>
               )

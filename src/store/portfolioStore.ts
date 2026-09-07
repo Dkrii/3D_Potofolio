@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 export type PortfolioSection = 'overview' | 'about' | 'computerVision' | 'bms' | 'website' | 'chatbot'
-export type BmsPart = 1 | 2 | 3 | 4
+export type BmsPart = 1 | 2 | 3
 export type Language = 'id' | 'en'
 
 export type HotspotSection = Exclude<PortfolioSection, 'overview'>

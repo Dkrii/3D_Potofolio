@@ -51,18 +51,6 @@ export const bmsPartDetails: Record<BmsPart, BmsPartDetail> = {
       { id: 'CAM-06', location: 'Meeting Room 3A', status: 'LIVE', fps: 30 },
     ],
   },
-  4: {
-    id: 4,
-    name: 'Zone D - Rooftop & Energy Hub',
-    zone: 'Rooftop Solar Array',
-    sensors: [
-      { label: 'Solar Generation', value: '18.4 kW', status: 'active' },
-      { label: 'Grid Feed In', value: '3.2 kW', status: 'normal' },
-    ],
-    cctvFeeds: [
-      { id: 'CAM-07', location: 'Rooftop Array', status: 'LIVE', fps: 30 },
-    ],
-  },
 }
 
 export interface MediaItem {
@@ -71,6 +59,21 @@ export interface MediaItem {
   subtitle: string
   src: string
   poster?: string
+}
+
+export interface ExperienceItem {
+  role: string
+  company: string
+  period: string
+  type: string
+  highlights: string[]
+}
+
+export interface EducationItem {
+  degree: string
+  institution: string
+  major: string
+  status: string
 }
 
 export interface PortfolioContent {
@@ -82,49 +85,124 @@ export interface PortfolioContent {
   workflow?: string[]
   items?: { title: string; detail: string }[]
   tags?: string[]
+  // Profile / About specific structures
+  education?: EducationItem
+  experience?: ExperienceItem[]
+  competencies?: { category: string; skills: string[] }[]
 }
 
 export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSection, 'overview'>, PortfolioContent>> = {
   id: {
     about: {
-      eyebrow: 'Tentang Developer',
+      eyebrow: 'Profil Profesional',
       title: 'Dikri Ali',
-      description: 'Software Engineer berpengalaman membangun sistem enterprise, pengawasan Computer Vision, RAG AI chatbot, serta visualisasi 3D Web interaktif. Berfokus pada arsitektur backend yang solid dan integrasi sistem end-to-end.',
-      metrics: [
-        { label: 'Keahlian Utama', value: 'Backend & Computer Vision' },
-        { label: 'Fokus Riset', value: 'AI RAG & 3D Web Visualization' },
+      description: 'Mahasiswa S1 Teknik Informatika di Universitas Nusa Putra dengan pengalaman industri nyata sebagai Fullstack Developer Intern di PT Akebono Brake Astra Indonesia selama 8 bulan. Memiliki ketertarikan mendalam dan keahlian praktis dalam rekayasa perangkat lunak skala enterprise, sistem computer vision industri, arsitektur AI RAG, serta visualisasi 3D grafis modern.',
+      education: {
+        degree: 'Sarjana Komputer (S1)',
+        institution: 'Universitas Nusa Putra',
+        major: 'Teknik Informatika',
+        status: 'Mahasiswa Aktif',
+      },
+      experience: [
+        {
+          role: 'Fullstack Developer Intern',
+          company: 'PT Akebono Brake Astra Indonesia',
+          period: '8 Bulan (Internship)',
+          type: 'Industrial / Manufacturing IT',
+          highlights: [
+            'Mengembangkan Dies Management System — platform pelacakan siklus hidup cetakan manufaktur end-to-end.',
+            'Membangun alur validasi status ketat (Rak → Persiapan → Mesin → Perawatan) untuk mengeliminasi potensi human error dan kehilangan aset.',
+            'Mengintegrasikan sistem pemindaian QR/Barcode mobile/web dan fitur otomatisasi jadwal perawatan preventif berbasis stroke counter mesin.',
+            'Bekerja sama lintas divisi untuk menyelaraskan kebutuhan operasional pabrik dengan arsitektur backend PostgreSQL & Laravel.',
+          ],
+        },
       ],
-      tags: ['Laravel', 'FastAPI', 'Python', 'TypeScript', 'YOLO', 'ChromaDB', 'React / Three.js'],
+      competencies: [
+        {
+          category: 'Backend & Enterprise Architecture',
+          skills: ['Laravel (PHP)', 'FastAPI (Python)', 'PostgreSQL', 'RESTful API', 'System Modeling'],
+        },
+        {
+          category: 'Artificial Intelligence & Vision',
+          skills: ['YOLO (Object Detection)', 'PyTorch', 'OpenCV', 'ChromaDB (Vector DB)', 'RAG Architecture', 'SentenceTransformers'],
+        },
+        {
+          category: 'Frontend & 3D Interactive Graphics',
+          skills: ['TypeScript / JavaScript', 'React', 'Three.js / React Three Fiber', 'GSAP Animation', 'Tailwind CSS'],
+        },
+      ],
+      tags: ['Fullstack Development', 'Laravel', 'FastAPI', 'Python', 'TypeScript', 'YOLO / Vision AI', 'ChromaDB RAG', 'React / Three.js', 'PostgreSQL'],
     },
 
     computerVision: {
       eyebrow: 'Applied AI & Industrial Safety Inspection',
       title: 'Deteksi Safety (PPE Video & Live Stream Detection)',
-      description: 'Sistem pengawasan Computer Vision berbasis Web & FastAPI yang dikembangkan untuk secara otomatis mendeteksi kepatuhan penggunaan Alat Pelindung Diri (APD/PPE) pekerja di area konstruksi dan manufaktur. Mampu mengolah input file video maupun live streaming camera dengan performa real-time.',
+      description: 'Sistem pengawasan Computer Vision berbasis Web & FastAPI yang dikembangkan untuk secara otomatis mendeteksi kepatuhan penggunaan Alat Pelindung Diri (APD/PPE: Helmet, Person, Vest) pada lingkungan konstruksi dan manufaktur. Catatan: Proyek ini merupakan prototipe aktif dengan dataset dasar (3 kelas) yang sedang dalam tahap ekspansi dataset untuk meningkatkan variasi lingkungan.',
+      media: [
+        {
+          type: 'video',
+          title: 'Demo Deteksi APD',
+          subtitle: 'Real-time YOLO Video & Stream Inference',
+          src: '/showcase/computer-vision/demo.mp4',
+          poster: '/showcase/computer-vision/detection-view.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Deteksi Lapangan & Kepatuhan K3',
+          subtitle: 'Visualisasi Bounding Box (Helmet, Person, Vest)',
+          src: '/showcase/computer-vision/detection-view.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Interface Deteksi & Logika Spasial',
+          subtitle: 'Verifikasi Kepatuhan & Tracking APD Pekerja',
+          src: '/showcase/computer-vision/detection-ui.jpeg',
+        },
+      ],
       metrics: [
-        { label: 'Kecepatan Inferensi', value: '30+ FPS Real-time' },
-        { label: 'Akurasi Deteksi', value: '94.2% mAP Score' },
-        { label: 'Mode Pemrosesan', value: 'Accurate & Smooth' },
+        { label: 'Akurasi Checkpoint', value: '84.53% mAP@0.5' },
+        { label: 'Throughput GPU (CUDA)', value: '140 - 280+ FPS' },
+        { label: 'Arsitektur Ringkas', value: '2.5M Params (YOLO26n)' },
       ],
       workflow: [
-        'Upload Video / Live RTSP Camera Stream',
-        'Inferensi Jaringan Syaraf YOLO (Filter Confidence & IoU NMS)',
-        'Mode Ganda (Accurate Tiap-Frame vs Smooth 2-Frame Skip)',
-        'Rekodifikasi Video H.264 / Output Live Stream MJPEG',
-        'Dashboard Telemetri Real-time (FPS, Latensi ms, & Pelanggaran APD)',
+        'Input Stream: Tangkap feed video / RTSP CCTV / webcam',
+        'Pre-processing: Letterbox 640x640, RGB convert & normalisasi',
+        'YOLO26n Engine: Ekstraksi fitur visual (C3k2 + C2PSA attention)',
+        'Logika Spasial K3: Validasi relasi bounding box Helmet & Vest per pekerja',
+        'Output Telemetri: Visualisasi box status patuh/pelanggaran & webhook log',
       ],
       items: [
-        { title: 'Deteksi Multi-Class APD', detail: 'Mendeteksi Helm/Hardhat, Safety Vest, Masker, dan perlengkapan kerja secara presisi.' },
-        { title: 'Dual Inference Engine', detail: 'Mode Accurate (tiap frame) & Mode Smooth (selang-seling frame dengan box tracking untuk efisiensi compute).' },
-        { title: 'Live Stream & Ekspor Video', detail: 'Mendukung live preview via stream MJPEG serta ekspor video rekaman berformat H.264/MP4.' },
+        { title: 'Deteksi Ringkas Edge-Optimized', detail: 'Arsitektur ultra-ringkas (2,5M parameter, 5,8 GFLOPs) dengan latensi 3,5–7,0 ms pada GPU CUDA.' },
+        { title: 'Logika Kepatuhan Spasial Otomatis', detail: 'Memvalidasi kepatuhan APD per individu dengan mencocokkan irisan koordinat helm dan rompi terhadap badan pekerja.' },
+        { title: 'Presisi Tinggi Lingkungan Industri', detail: 'Mencapai 84,53% mAP@0.5 dan 80,55% precision untuk meminimalkan false positive di lapangan.' },
       ],
-      tags: ['Python', 'FastAPI', 'YOLO (PyTorch)', 'OpenCV', 'MJPEG Streaming', 'imageio-ffmpeg'],
+      tags: ['Python', 'FastAPI', 'YOLO26 (PyTorch)', 'OpenCV', 'Supervision', 'ONNX / TensorRT'],
     },
 
     bms: {
       eyebrow: '3D Project & Digital Twin',
       title: '3D Building Management System (BMS)',
       description: 'Proyek visualisasi 3D Digital Twin interaktif yang dikembangkan menggunakan Three.js untuk memantau kondisi telemetri gedung, status HVAC, sensor lingkungan, dan jaringan pengawasan CCTV secara per-lantai.',
+      media: [
+        {
+          type: 'image',
+          title: 'Tampilan Utama Digital Twin',
+          subtitle: 'Visualisasi 3D Gedung Interaktif & Viewport Controls',
+          src: '/showcase/bms/bms-overview.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Exploded Floor View',
+          subtitle: 'Inspeksi Interior Per-Lantai dengan Animasi GSAP',
+          src: '/showcase/bms/bms-exploded.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Telemetri Sensor & IoT Hub',
+          subtitle: 'Pemantauan Suhu, Daya Listrik, dan Status Kamera CCTV',
+          src: '/showcase/bms/bms-telemetry.jpeg',
+        },
+      ],
       metrics: [
         { label: 'Kecepatan Render WebGL', value: '60 FPS Smooth' },
         { label: 'Latensi Sinkronisasi', value: '< 100ms Sync' },
@@ -170,9 +248,9 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
         },
       ],
       metrics: [
-        { label: 'Akurasi Pelacakan', value: '100% Zero-Loss' },
-        { label: 'Efisiensi Waktu Cari', value: '60% Lebih Cepat' },
-        { label: 'Monitoring Stroke Mesin', value: 'Preventive Otomatis' },
+        { label: 'Akurasi Lokasi', value: '100% Zero-Loss' },
+        { label: 'Efisiensi Waktu', value: '60% Lebih Cepat' },
+        { label: 'Perawatan Dies', value: 'Preventive Auto' },
       ],
       workflow: [
         'Scan IN Rak (Penyimpanan Dies di Rak)',
@@ -193,6 +271,27 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
       eyebrow: 'Generative AI & Cultural NLP Engine',
       title: 'Chatbot Sunda (Paribasa & Knowledge RAG)',
       description: 'Platform AI Chatbot interaktif yang menggunakan arsitektur Retrieval-Augmented Generation (RAG) untuk menjawab pertanyaan dan melestarikan pengetahuan bahasa serta kebudayaan Sunda (seperti 100+ Paribasa/Babasan terstruktur dan informasi daerah).',
+      media: [
+        {
+          type: 'video',
+          title: 'Demo Interaktif Chatbot',
+          subtitle: 'Q&A Real-time & Dialog Kontekstual',
+          src: '/showcase/chatbot-sunda/demo.mp4',
+          poster: '/showcase/chatbot-sunda/chat-interface.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Interface Chat & Rekomendasi Paribasa',
+          subtitle: 'Tampilan Respons Natural & Dialog Interaktif',
+          src: '/showcase/chatbot-sunda/chat-interface.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Sintesis Pengetahuan & Penjelasan Budaya',
+          subtitle: 'Visualisasi Jawaban Komprehensif Berbasis RAG',
+          src: '/showcase/chatbot-sunda/rag-response.jpeg',
+        },
+      ],
       metrics: [
         { label: 'Latensi Respon', value: '< 750ms Response' },
         { label: 'Presisi Retrieval', value: '92% Precision' },
@@ -216,44 +315,115 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
 
   en: {
     about: {
-      eyebrow: 'About Developer',
+      eyebrow: 'Professional Profile',
       title: 'Dikri Ali',
-      description: 'Software Engineer experienced in developing enterprise platforms, Computer Vision safety inspection, RAG AI chatbots, and interactive 3D Web visualization. Focused on robust backend architectures and end-to-end system integration.',
-      metrics: [
-        { label: 'Core Expertise', value: 'Backend & Computer Vision' },
-        { label: 'Research Focus', value: 'AI RAG & 3D Web Visualization' },
+      description: 'Informatics Engineering undergraduate at Nusa Putra University with hands-on industrial experience as a Fullstack Developer Intern at PT Akebono Brake Astra Indonesia for 8 months. Passionate and skilled in enterprise software engineering, industrial computer vision systems, LLM RAG pipelines, and interactive 3D Web graphics.',
+      education: {
+        degree: 'Bachelor of Informatics Engineering (S.Kom)',
+        institution: 'Nusa Putra University',
+        major: 'Informatics Engineering',
+        status: 'Active Student',
+      },
+      experience: [
+        {
+          role: 'Fullstack Developer Intern',
+          company: 'PT Akebono Brake Astra Indonesia',
+          period: '8 Months (Internship)',
+          type: 'Industrial / Manufacturing IT',
+          highlights: [
+            'Architected and delivered the Dies Management System — an end-to-end tooling lifecycle and warehouse tracking platform.',
+            'Engineered strict state-machine validation logic (Rack → Preparation → Machine → Maintenance) to eliminate asset loss and production downtime.',
+            'Integrated mobile/web QR & barcode scanning along with automated preventive maintenance triggers powered by machine stroke counting.',
+            'Collaborated closely across production and IT engineering divisions to align factory-floor workflows with PostgreSQL & Laravel backend architectures.',
+          ],
+        },
       ],
-      tags: ['Laravel', 'FastAPI', 'Python', 'TypeScript', 'YOLO', 'ChromaDB', 'React / Three.js'],
+      competencies: [
+        {
+          category: 'Backend & Enterprise Architecture',
+          skills: ['Laravel (PHP)', 'FastAPI (Python)', 'PostgreSQL', 'RESTful API', 'System Modeling'],
+        },
+        {
+          category: 'Artificial Intelligence & Vision',
+          skills: ['YOLO (Object Detection)', 'PyTorch', 'OpenCV', 'ChromaDB (Vector DB)', 'RAG Architecture', 'SentenceTransformers'],
+        },
+        {
+          category: 'Frontend & 3D Interactive Graphics',
+          skills: ['TypeScript / JavaScript', 'React', 'Three.js / React Three Fiber', 'GSAP Animation', 'Tailwind CSS'],
+        },
+      ],
+      tags: ['Fullstack Development', 'Laravel', 'FastAPI', 'Python', 'TypeScript', 'YOLO / Vision AI', 'ChromaDB RAG', 'React / Three.js', 'PostgreSQL'],
     },
 
     computerVision: {
       eyebrow: 'Applied AI & Industrial Safety Inspection',
       title: 'Safety Detection (PPE Video & Live Stream Detection)',
-      description: 'Web & FastAPI-based Computer Vision inspection system built to automatically enforce Personal Protective Equipment (PPE) compliance for construction and manufacturing workers. Supports real-time video upload processing and live RTSP camera streams.',
+      description: 'Web & FastAPI-based Computer Vision inspection system built to automatically enforce Personal Protective Equipment (PPE: Helmet, Person, Vest) compliance for construction and manufacturing workers. Note: This is an active prototype trained on a baseline 3-class dataset currently undergoing expansion for broader environmental generalization.',
+      media: [
+        {
+          type: 'video',
+          title: 'PPE Detection Demo',
+          subtitle: 'Real-time YOLO Video & Stream Inference',
+          src: '/showcase/computer-vision/demo.mp4',
+          poster: '/showcase/computer-vision/detection-view.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Industrial Safety Compliance',
+          subtitle: 'Spatial Bounding Box (Helmet, Person, Vest)',
+          src: '/showcase/computer-vision/detection-view.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Detection UI & Spatial Logic',
+          subtitle: 'Worker PPE Verification & Telemetry Output',
+          src: '/showcase/computer-vision/detection-ui.jpeg',
+        },
+      ],
       metrics: [
-        { label: 'Inference Speed', value: '30+ FPS Real-time' },
-        { label: 'Detection Accuracy', value: '94.2% mAP Score' },
-        { label: 'Stream Modes', value: 'Accurate & Smooth' },
+        { label: 'Checkpoint Accuracy', value: '84.53% mAP@0.5' },
+        { label: 'GPU Throughput (CUDA)', value: '140 - 280+ FPS' },
+        { label: 'Compact Architecture', value: '2.5M Params (YOLO26n)' },
       ],
       workflow: [
-        'Video Upload / Live RTSP Camera Stream Feed',
-        'YOLO Neural Network Inference (Confidence & IoU NMS Filter)',
-        'Dual Processing Mode (Accurate Frame-by-Frame vs Smooth 2-Frame Skip)',
-        'H.264 Video Re-encoding / Live MJPEG Stream Output',
-        'Real-time Telemetry Dashboard (FPS, Latency ms, & Violation Counter)',
+        'Input Stream: Capture video feed / RTSP CCTV / webcam',
+        'Pre-processing: 640x640 letterboxing, RGB conversion & normalization',
+        'YOLO26n Inference: Feature extraction via C3k2 + C2PSA attention',
+        'Spatial K3 Logic: Spatial matching of Helmet & Vest boxes per person',
+        'Output Telemetry: Box compliance status visualization & webhook logs',
       ],
       items: [
-        { title: 'Multi-Class PPE Detection', detail: 'Accurately detects Helmets/Hardhats, Safety Vests, Masks, and other safety gear.' },
-        { title: 'Dual Inference Engine', detail: 'Accurate Mode (full frame inference) & Smooth Mode (frame-skipping with box tracking for compute efficiency).' },
-        { title: 'Live Stream & Video Export', detail: 'Supports live preview via MJPEG streaming and detected video export in H.264/MP4 format.' },
+        { title: 'Edge-Optimized Real-time Model', detail: 'Ultra-compact model (2.5M params, 5.8 GFLOPs) achieving 3.5–7.0 ms inference latency on CUDA GPUs.' },
+        { title: 'Automated Spatial Compliance', detail: 'Per-worker compliance validation matching helmet and vest coordinate intersections against detected person geometry.' },
+        { title: 'Industrial Grade Precision', detail: 'Achieved 84.53% mAP@0.5 and 80.55% precision to minimize false alarms in noisy site conditions.' },
       ],
-      tags: ['Python', 'FastAPI', 'YOLO (PyTorch)', 'OpenCV', 'MJPEG Streaming', 'imageio-ffmpeg'],
+      tags: ['Python', 'FastAPI', 'YOLO26 (PyTorch)', 'OpenCV', 'Supervision', 'ONNX / TensorRT'],
     },
 
     bms: {
       eyebrow: '3D Project & Digital Twin',
       title: '3D Building Management System (BMS)',
       description: 'Interactive 3D Digital Twin visualization project built with Three.js to monitor building telemetry, HVAC status, ambient environmental sensors, and CCTV surveillance networks per floor.',
+      media: [
+        {
+          type: 'image',
+          title: 'Digital Twin Overview',
+          subtitle: 'Interactive 3D Building & Viewport Controls',
+          src: '/showcase/bms/bms-overview.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Exploded Floor View',
+          subtitle: 'Per-Floor Interior Inspection with GSAP Animation',
+          src: '/showcase/bms/bms-exploded.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'IoT Sensor Telemetry',
+          subtitle: 'HVAC Temperature, Power Load, and CCTV Node Status',
+          src: '/showcase/bms/bms-telemetry.jpeg',
+        },
+      ],
       metrics: [
         { label: 'WebGL Render Speed', value: '60 FPS Smooth' },
         { label: 'Telemetry Latency', value: '< 100ms Sync' },
@@ -300,8 +470,8 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
       ],
       metrics: [
         { label: 'Tracking Accuracy', value: '100% Zero-Loss' },
-        { label: 'Search Time Reduction', value: '60% Faster' },
-        { label: 'Machine Stroke Monitoring', value: 'Automated Preventive' },
+        { label: 'Search Speed', value: '60% Faster' },
+        { label: 'Maintenance', value: 'Auto Preventive' },
       ],
       workflow: [
         'Scan IN Rack (Dies Storage in Rack)',
@@ -322,6 +492,27 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
       eyebrow: 'Generative AI & Cultural NLP Engine',
       title: 'Chatbot Sunda (Paribasa & Knowledge RAG)',
       description: 'Interactive AI Chatbot platform utilizing Retrieval-Augmented Generation (RAG) architecture to answer questions and preserve Sundanese language and cultural heritage (including 113+ structured Paribasa/proverbs and regional knowledge).',
+      media: [
+        {
+          type: 'video',
+          title: 'Interactive Chatbot Demo',
+          subtitle: 'Real-time Q&A & Contextual Dialogue',
+          src: '/showcase/chatbot-sunda/demo.mp4',
+          poster: '/showcase/chatbot-sunda/chat-interface.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Chat Interface & Proverb Recommendations',
+          subtitle: 'Natural Response & Interactive Conversation',
+          src: '/showcase/chatbot-sunda/chat-interface.jpeg',
+        },
+        {
+          type: 'image',
+          title: 'Knowledge Synthesis & Cultural Answers',
+          subtitle: 'Comprehensive RAG-powered Insights',
+          src: '/showcase/chatbot-sunda/rag-response.jpeg',
+        },
+      ],
       metrics: [
         { label: 'Query Latency', value: '< 750ms Response' },
         { label: 'Retrieval Accuracy', value: '92% Precision' },
