@@ -30,13 +30,13 @@ export interface TelemetryState {
 }
 
 export const defaultSceneSettings: SceneSettings = {
-  exposure: 1,
-  ambient: 1.8,
-  hemisphere: 2.4,
-  keyLight: 3.2,
-  fillLight: 2.4,
+  exposure: 1.15,
+  ambient: 2.2,
+  hemisphere: 2.8,
+  keyLight: 3.8,
+  fillLight: 2.8,
   background: '#070b12',
-  overlay: 0.18,
+  overlay: 0.15,
   bmsFloorGap: 2.5,
   hotspotOffsets: {
     about: { x: 0, y: 0, z: 0 },

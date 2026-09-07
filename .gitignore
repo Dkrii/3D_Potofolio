@@ -26,9 +26,11 @@ dist-ssr
 # Raw Assets / Bahan & Large Media
 Bahan/
 Bahan
-*.mp4
 *.mkv
 *.mov
 *.MOV
+
+# Ignore large raw video files (keep compressed showcase videos)
+!public/showcase/**/*.mp4
 
 
