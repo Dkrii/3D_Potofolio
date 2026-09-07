@@ -1,10 +1,11 @@
 import gsap from 'gsap'
 import { Html, useGLTF } from '@react-three/drei'
 import { useThree, type ThreeEvent } from '@react-three/fiber'
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Box3, Color, Mesh, MeshStandardMaterial, Object3D, Vector3 } from 'three'
 import { interactiveMappings, type InteractiveMapping } from '../data/interactiveMappings'
 import { usePortfolioStore, type PortfolioSection } from '../store/portfolioStore'
+import { projectConfig } from '../components/navigation/Navigation'
 
 const modelUrl = '/models/PORTOFOLIO_V2.glb'
 const mappingByNode = new Map(interactiveMappings.flatMap((mapping) => mapping.nodes.map((node) => [node, mapping])))
@@ -23,6 +24,7 @@ export function PortfolioModel() {
   const gltf = useGLTF(modelUrl)
   const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene])
   const invalidate = useThree((state) => state.invalidate)
+
   const hotspots = useMemo(() => {
     scene.updateMatrixWorld(true)
     const bounds = new Map<Exclude<PortfolioSection, 'overview'>, Box3>()
@@ -36,10 +38,17 @@ export function PortfolioModel() {
     })
     return [...bounds].map(([section, box]) => {
       const position = box.getCenter(new Vector3())
-      position.y = box.max.y + 0.25
-      return { section, position, label: section === 'bms' ? 'BMS' : interactiveMappings.find((mapping) => mapping.section === section)?.label ?? section }
+      position.y = box.max.y + 0.35 // Higher baseline clearance
+      const proj = projectConfig.find((p) => p.section === section)
+      return {
+        section,
+        position,
+        label: section === 'bms' ? 'BMS' : interactiveMappings.find((mapping) => mapping.section === section)?.label ?? section,
+        tagline: proj?.tagline ?? 'Click to inspect project details',
+      }
     })
   }, [scene])
+
   const activeSection = usePortfolioStore((state) => state.activeSection)
   const activeBmsPart = usePortfolioStore((state) => state.activeBmsPart)
   const bmsFloorGap = usePortfolioStore((state) => state.sceneSettings.bmsFloorGap)
@@ -48,9 +57,31 @@ export function PortfolioModel() {
   const setBmsPart = usePortfolioStore((state) => state.setBmsPart)
   const setHoveredObject = usePortfolioStore((state) => state.setHoveredObject)
   const setSceneReady = usePortfolioStore((state) => state.setSceneReady)
+
   const meshesBySection = useRef(new Map<PortfolioSection, Mesh[]>())
   const bmsObjects = useRef(new Map<number, { object: Object3D; initial: Vector3 }[]>())
   const highlightedSection = useRef<PortfolioSection | null>(null)
+
+  // Hotspot onboarding pulse state
+  const [pulseActive, setPulseActive] = useState(() => !sessionStorage.getItem('hotspot_onboarding_played'))
+  const [hoveredHotspot, setHoveredHotspot] = useState<string | null>(null)
+
+  const stopPulse = () => {
+    if (pulseActive) {
+      setPulseActive(false)
+      sessionStorage.setItem('hotspot_onboarding_played', 'true')
+    }
+  }
+
+  useEffect(() => {
+    if (pulseActive) {
+      const timer = setTimeout(() => {
+        setPulseActive(false)
+        sessionStorage.setItem('hotspot_onboarding_played', 'true')
+      }, 5000) // ~2 pulse cycles
+      return () => clearTimeout(timer)
+    }
+  }, [pulseActive])
 
   useEffect(() => {
     const sections = new Map<PortfolioSection, Mesh[]>()
@@ -142,6 +173,7 @@ export function PortfolioModel() {
     const mapping = findMapping(event.object)
     if (!mapping) return
     event.stopPropagation()
+    stopPulse()
     if (mapping.bmsPart) setBmsPart(mapping.bmsPart)
     else openSection(mapping.section)
   }
@@ -151,14 +183,67 @@ export function PortfolioModel() {
   return (
     <>
       <primitive object={scene} onPointerMove={onPointerMove} onPointerOut={onPointerOut} onClick={onClick} />
-      {activeSection === 'overview' && hotspots.map((hotspot) => (
-        <Html key={hotspot.section} position={hotspot.position.clone().add(hotspotOffsets[hotspot.section])} center occlude zIndexRange={[10, 0]}>
-          <button className="object-hotspot" type="button" onClick={() => openSection(hotspot.section)} aria-label={`Open ${hotspot.label}`}>
-            <i aria-hidden="true" />
-            <span>{hotspot.label}</span>
-          </button>
-        </Html>
-      ))}
+      {activeSection === 'overview' && hotspots.map((hotspot) => {
+        // Dynamic clearance based on camera view position
+        const pos = hotspot.position.clone().add(hotspotOffsets[hotspot.section])
+        const isHovered = hoveredHotspot === hotspot.section
+
+        return (
+          <Html key={hotspot.section} position={pos} center occlude zIndexRange={[5, 0]}>
+            <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              {/* Leader-line to avoid collision */}
+              <div style={{ width: '1px', height: '14px', background: 'rgba(56, 189, 248, 0.5)', marginBottom: '2px' }} />
+
+              <button
+                className={`object-hotspot ${pulseActive ? 'pulse-onboarding' : ''}`}
+                type="button"
+                onClick={() => {
+                  stopPulse()
+                  openSection(hotspot.section)
+                }}
+                onMouseEnter={() => {
+                  stopPulse()
+                  setHoveredHotspot(hotspot.section)
+                }}
+                onMouseLeave={() => setHoveredHotspot(null)}
+                aria-label={`Open ${hotspot.label}`}
+                style={{
+                  position: 'relative',
+                  outline: 'none',
+                }}
+              >
+                <i aria-hidden="true" />
+                <span>{hotspot.label}</span>
+              </button>
+
+              {/* Hover preview tagline tooltip */}
+              {isHovered && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 'calc(100% + 8px)',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: 'rgba(8, 12, 11, 0.96)',
+                    border: '1px solid #38bdf8',
+                    color: '#e2e8f0',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.72rem',
+                    whiteSpace: 'nowrap',
+                    pointerEvents: 'none',
+                    boxShadow: '0 4px 18px rgba(0,0,0,0.6)',
+                    zIndex: 50,
+                    animation: 'fadeIn 0.2s ease',
+                  }}
+                >
+                  {hotspot.tagline}
+                </div>
+              )}
+            </div>
+          </Html>
+        )
+      })}
     </>
   )
 }

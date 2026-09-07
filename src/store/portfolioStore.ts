@@ -2,6 +2,7 @@ import { create } from 'zustand'
 
 export type PortfolioSection = 'overview' | 'about' | 'computerVision' | 'bms' | 'website' | 'chatbot'
 export type BmsPart = 1 | 2 | 3 | 4
+export type Language = 'id' | 'en'
 
 export type HotspotSection = Exclude<PortfolioSection, 'overview'>
 export type HotspotOffset = { x: number; y: number; z: number }
@@ -16,6 +17,16 @@ export interface SceneSettings {
   overlay: number
   bmsFloorGap: number
   hotspotOffsets: Record<HotspotSection, HotspotOffset>
+}
+
+export interface TelemetryState {
+  temp: number
+  humidity: number
+  powerKw: number
+  co2Ppm: number
+  aqi: number
+  occupancyCount: number
+  cctvStatus: 'LIVE' | 'RECORDING'
 }
 
 export const defaultSceneSettings: SceneSettings = {
@@ -45,6 +56,9 @@ const loadSceneSettings = (): SceneSettings => {
 }
 
 interface PortfolioState {
+  language: Language
+  setLanguage: (lang: Language) => void
+  toggleLanguage: () => void
   activeSection: PortfolioSection
   activeBmsPart: BmsPart | null
   hoveredObject: PortfolioSection | null
@@ -53,6 +67,8 @@ interface PortfolioState {
   performanceMode: 'standard' | 'reduced'
   sceneSettings: SceneSettings
   isSceneControlsOpen: boolean
+  telemetry: TelemetryState
+  updateTelemetry: () => void
   setSceneSetting: <K extends keyof SceneSettings>(key: K, value: SceneSettings[K]) => void
   resetSceneSettings: () => void
   toggleSceneControls: () => void
@@ -64,6 +80,18 @@ interface PortfolioState {
 }
 
 export const usePortfolioStore = create<PortfolioState>((set) => ({
+  language: (localStorage.getItem('portfolio-language') as Language) || 'id',
+  setLanguage: (language) => {
+    localStorage.setItem('portfolio-language', language)
+    set({ language })
+  },
+  toggleLanguage: () => {
+    set((state) => {
+      const nextLang = state.language === 'id' ? 'en' : 'id'
+      localStorage.setItem('portfolio-language', nextLang)
+      return { language: nextLang }
+    })
+  },
   activeSection: 'overview',
   activeBmsPart: null,
   hoveredObject: null,
@@ -72,6 +100,25 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
   performanceMode: window.devicePixelRatio > 1.5 ? 'reduced' : 'standard',
   sceneSettings: loadSceneSettings(),
   isSceneControlsOpen: false,
+  telemetry: {
+    temp: 21.8,
+    humidity: 48,
+    powerKw: 64.2,
+    co2Ppm: 412,
+    aqi: 28,
+    occupancyCount: 38,
+    cctvStatus: 'LIVE',
+  },
+  updateTelemetry: () => set((state) => ({
+    telemetry: {
+      ...state.telemetry,
+      temp: Number((21.5 + (Math.random() * 0.8 - 0.4)).toFixed(1)),
+      humidity: Math.round(48 + (Math.random() * 4 - 2)),
+      powerKw: Number((64.0 + (Math.random() * 1.5 - 0.7)).toFixed(1)),
+      co2Ppm: Math.round(410 + (Math.random() * 10 - 5)),
+      occupancyCount: Math.max(30, Math.min(50, state.telemetry.occupancyCount + (Math.random() > 0.5 ? 1 : -1))),
+    },
+  })),
   setSceneSetting: (key, value) => set((state) => {
     const sceneSettings = { ...state.sceneSettings, [key]: value }
     localStorage.setItem('portfolio-scene-settings', JSON.stringify(sceneSettings))

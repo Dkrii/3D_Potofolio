@@ -10,17 +10,21 @@ export function CameraController() {
   const camera = useThree((state) => state.camera)
   const invalidate = useThree((state) => state.invalidate)
   const activeSection = usePortfolioStore((state) => state.activeSection)
-  const presets = useCameraDevStore((state) => state.presets)
+  const viewportMode = useCameraDevStore((state) => state.viewportMode)
+  const desktopPresets = useCameraDevStore((state) => state.desktopPresets)
+  const mobilePresets = useCameraDevStore((state) => state.mobilePresets)
   const editMode = useCameraDevStore((state) => state.editMode)
   const setCurrentView = useCameraDevStore((state) => state.setCurrentView)
   const controls = useRef<ElementRef<typeof OrbitControls>>(null)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const isOverview = activeSection === 'overview'
 
+  const activePresets = viewportMode === 'mobile' ? mobilePresets : desktopPresets
+
   useEffect(() => {
     const orbit = controls.current
     if (!orbit) return
-    const preset = presets[activeSection]
+    const preset = activePresets[activeSection]
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const duration = reducedMotion ? 0 : 1.05
     setIsTransitioning(true)
@@ -51,7 +55,7 @@ export function CameraController() {
       targetTween.kill()
       fovTween?.kill()
     }
-  }, [activeSection, camera, invalidate, presets])
+  }, [activeSection, camera, invalidate, activePresets])
 
   const captureView = () => {
     const orbit = controls.current

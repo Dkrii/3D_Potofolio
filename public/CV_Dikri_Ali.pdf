@@ -1,0 +1,78 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/MediaBox [0 0 612 792]
+/Resources <<
+  /Font <<
+    /F1 4 0 R
+  >>
+>>
+/Contents 5 0 R
+>>
+endobj
+4 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica-Bold
+>>
+endobj
+5 0 obj
+<<
+/Length 350
+>>
+stream
+BT
+/F1 22 Tf
+50 720 Td
+(DIKRI ALI - SOFTWARE ENGINEER) Tj
+/F1 12 Tf
+0 -30 Td
+(Backend Development | Computer Vision | 3D Web & RAG Systems) Tj
+0 -30 Td
+(Portfolio: 3D Interactive WebGL Application) Tj
+0 -25 Td
+(Key Projects:) Tj
+0 -20 Td
+(- Dies Management System: Industrial Lifecycle & Asset Tracking) Tj
+0 -20 Td
+(- Deteksi Safety: Real-time PPE Inspection using YOLO & FastAPI) Tj
+0 -20 Td
+(- Chatbot Sunda: Cultural NLP & Knowledge Base RAG Engine) Tj
+0 -20 Td
+(- 3D Building Management System: IoT Digital Twin Visualization) Tj
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000068 00000 n 
+0000000125 00000 n 
+0000000253 00000 n 
+0000000334 00000 n 
+trailer
+<<
+/Size 6
+/Root 1 0 R
+>>
+startxref
+738
+%%EOF

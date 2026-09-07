@@ -1,48 +1,167 @@
+import { useState } from 'react'
+import { FileText, GitBranch, Menu, X, CheckCircle2, Activity } from 'lucide-react'
 import { usePortfolioStore } from '../../store/portfolioStore'
 
-const sectionNames = {
-  overview: 'Overview', about: 'About', computerVision: 'Computer Vision', bms: 'BMS', website: 'Website', chatbot: 'Chatbot',
-}
-
 export function DashboardHeader() {
+  const closeSection = usePortfolioStore((state) => state.closeSection)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
   return (
     <header className="dashboard-header">
-      <div className="header-identity"><strong>DIKRI ALI</strong><span>Software Engineer / Model-led Portfolio</span></div>
-      <div className="system-online"><i aria-hidden="true" /><span>3D model</span><strong>ACTIVE</strong></div>
-    </header>
-  )
-}
+      {/* Accessibility Skip Link */}
+      <a
+        href="#main-content"
+        className="skip-to-content"
+        style={{
+          position: 'absolute',
+          top: '-40px',
+          left: '10px',
+          background: '#c7f36b',
+          color: '#080c0b',
+          padding: '6px 12px',
+          zIndex: 100,
+          fontWeight: 700,
+          borderRadius: '4px',
+          transition: 'top 0.2s',
+        }}
+        onFocus={(e) => (e.target.style.top = '10px')}
+        onBlur={(e) => (e.target.style.top = '-40px')}
+      >
+        Skip to Content
+      </a>
 
-export function StatusPanel() {
-  const activeSection = usePortfolioStore((state) => state.activeSection)
-  return (
-    <aside className="status-panel" aria-label="Portfolio status">
-      <div className="panel-heading"><span>Portfolio Status</span><small>SYS-01</small></div>
-      <dl className="status-summary">
-        <div><dt>Portfolio</dt><dd className="status-active">Available</dd></div>
-        <div><dt>Interface</dt><dd>3D + Navigation</dd></div>
-        <div><dt>Current View</dt><dd>{sectionNames[activeSection]}</dd></div>
-      </dl>
-      <div className="panel-heading subsystem-heading"><span>Focus areas</span><small>03 AREAS</small></div>
-      <ul className="subsystem-list">
-        <li><span><i />Computer Vision</span><strong>Explore</strong></li>
-        <li><span><i />BMS</span><strong>4 Parts</strong></li>
-        <li><span><i />Website</span><strong>Explore</strong></li>
-      </ul>
-      <div className="status-note"><span>Experience</span><strong>3D PORTFOLIO</strong><small>Select model elements to open focused project sections</small></div>
-    </aside>
+      {/* Brand Identity */}
+      <div className="header-identity" onClick={closeSection} style={{ cursor: 'pointer' }}>
+        <strong>DIKRI ALI</strong>
+        <span>Software Engineer / Model-led Portfolio</span>
+      </div>
+
+      {/* Desktop Multi-action Header Bar */}
+      <div className="desktop-header-actions">
+        <div className="status-badge">
+          <span className="pulse-dot"></span>
+          <span>AVAILABLE FOR HIRE</span>
+        </div>
+
+        <a
+          href="https://github.com"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="GitHub Profile"
+          className="header-ghost-btn"
+        >
+          <GitBranch size={15} color="#94a3b8" />
+          <span>GitHub</span>
+        </a>
+
+        <a
+          href="/CV_Dikri_Ali.pdf"
+          download="CV_Dikri_Ali.pdf"
+          aria-label="Download CV Document"
+          className="header-primary-btn"
+        >
+          <FileText size={14} color="#080c0b" />
+          <span>Download CV</span>
+        </a>
+      </div>
+
+      {/* Mobile Single Menu Icon (<768px) */}
+      <button
+        className="mobile-menu-btn"
+        type="button"
+        aria-label="Open actions menu"
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+      >
+        {mobileMenuOpen ? <X size={20} color="#38bdf8" /> : <Menu size={20} color="#38bdf8" />}
+      </button>
+
+      {/* Mobile Compact Dropdown / Sheet */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu-dropdown" onClick={() => setMobileMenuOpen(false)}>
+          <div className="mobile-menu-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-sheet-header">
+              <span>QUICK ACTIONS</span>
+              <button type="button" onClick={() => setMobileMenuOpen(false)} style={{ background: 'transparent', border: 0, color: '#94a3b8' }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="mobile-sheet-status">
+              <CheckCircle2 size={16} color="#4ade80" />
+              <span>Available for Hire (Full-time / Contract)</span>
+            </div>
+
+            <div className="mobile-sheet-links">
+              <a
+                href="/CV_Dikri_Ali.pdf"
+                download="CV_Dikri_Ali.pdf"
+                className="mobile-sheet-cv-btn"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <FileText size={16} color="#080c0b" />
+                <span>Download CV (ATS)</span>
+              </a>
+
+              <a
+                href="https://github.com"
+                target="_blank"
+                rel="noreferrer"
+                className="mobile-sheet-github-btn"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <GitBranch size={16} color="#38bdf8" />
+                <span>GitHub Profile</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+    </header>
   )
 }
 
 export function StatusBar() {
   const activeSection = usePortfolioStore((state) => state.activeSection)
   const isSceneReady = usePortfolioStore((state) => state.isSceneReady)
+  const closeSection = usePortfolioStore((state) => state.closeSection)
+
+  const sectionNames: Record<string, string> = {
+    overview: 'Overview', about: 'About', computerVision: 'Computer Vision', bms: 'BMS', website: 'Website', chatbot: 'Chatbot',
+  }
+
   return (
     <footer className="status-bar">
-      <span className="connected"><i />Connected</span>
-      <span>{isSceneReady ? 'Model Loaded' : 'Model Loading'}</span>
-      <span>Render: Demand</span>
-      <span className="current-section">Current Section: <strong>{sectionNames[activeSection]}</strong></span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <span className="connected"><i />System Online</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <Activity size={14} color="#38bdf8" />
+          {isSceneReady ? 'WebGL Model Ready (60 FPS)' : 'Loading 3D Engine...'}
+        </span>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginLeft: 'auto' }}>
+        <span style={{ color: '#94a3b8', fontSize: '0.68rem' }}>💡 Click 3D Building objects to inspect</span>
+        {activeSection !== 'overview' && (
+          <button
+            type="button"
+            onClick={closeSection}
+            aria-label="Back to Overview"
+            style={{
+              background: 'rgba(56, 189, 248, 0.2)',
+              color: '#38bdf8',
+              border: '1px solid #38bdf8',
+              padding: '2px 8px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '0.65rem',
+              fontWeight: 600,
+            }}
+          >
+            ← Back to Overview
+          </button>
+        )}
+        <span className="current-section">Section: <strong style={{ color: '#38bdf8' }}>{sectionNames[activeSection] ?? activeSection}</strong></span>
+      </div>
     </footer>
   )
 }

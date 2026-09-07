@@ -1,7 +1,7 @@
 export const projects = [
-  { name: 'Dies Management System', category: 'Backend / Enterprise System' },
-  { name: 'OCR Document Platform', category: 'AI / Backend / OCR' },
-  { name: 'Smart Parking Monitoring', category: 'Computer Vision / 3D Visualization' },
-  { name: '3D Building Monitoring / BMS', category: 'Three.js / Interactive Visualization' },
-  { name: 'Tikum', category: 'Laravel / Realtime / Mobile Backend' },
+  { name: 'Dies Management System (Astra)', category: 'Backend / Enterprise System' },
+  { name: 'Deteksi Safety (PPE Monitoring)', category: 'Computer Vision / AI' },
+  { name: 'Chatbot Sunda (RAG Engine)', category: 'Generative AI / NLP' },
+  { name: '3D Building Management System', category: 'Three.js / Digital Twin' },
+  { name: 'Tikum Mobile Backend', category: 'Laravel / Realtime / Mobile' },
 ]
