@@ -1,4 +1,4 @@
-import { defaultSceneSettings, type HotspotOffset, type SceneSettings, usePortfolioStore } from '../../store/portfolioStore'
+import { defaultSceneSettings, type SceneSettings, usePortfolioStore } from '../../store/portfolioStore'
 
 const sliders: { key: Exclude<keyof SceneSettings, 'background' | 'hotspotOffsets' | 'bmsFloorGap'>; label: string; min: number; max: number; step: number }[] = [
   { key: 'exposure', label: 'Exposure', min: 0.5, max: 2.5, step: 0.05 },
@@ -15,18 +15,6 @@ export function SceneControls() {
   const setSetting = usePortfolioStore((state) => state.setSceneSetting)
   const reset = usePortfolioStore((state) => state.resetSceneSettings)
   const toggle = usePortfolioStore((state) => state.toggleSceneControls)
-
-  const bmsOffset = settings.hotspotOffsets.bms ?? { x: 0, y: 0, z: 0 }
-
-  const handleBmsOffsetChange = (axis: keyof HotspotOffset, value: number) => {
-    setSetting('hotspotOffsets', {
-      ...settings.hotspotOffsets,
-      bms: {
-        ...bmsOffset,
-        [axis]: value,
-      },
-    })
-  }
 
   return (
     <div className="scene-controls">
