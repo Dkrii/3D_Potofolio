@@ -899,7 +899,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   .mobile-sheet-github-btn { background: rgba(255, 255, 255, 0.05); color: #e2e8f0; text-decoration: none; padding: 10px 14px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid rgba(255, 255, 255, 0.1); }
 
   /* Mobile Flat Card Landing View */
-  .mobile-flat-landing { display: flex; flex-direction: column; gap: 16px; padding: 20px 16px 60px; min-height: calc(100vh - 56px); }
+  .mobile-flat-landing { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+    padding: 20px 16px 120px; 
+    min-height: calc(100vh - 56px); 
+    box-sizing: border-box;
+  }
   .mobile-bio-card {
     background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(15, 23, 42, 0.85));
     border: 1px solid rgba(56, 189, 248, 0.25);
