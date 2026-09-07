@@ -30,20 +30,20 @@ export interface TelemetryState {
 }
 
 export const defaultSceneSettings: SceneSettings = {
-  exposure: 1.15,
-  ambient: 2.2,
-  hemisphere: 2.8,
-  keyLight: 3.8,
-  fillLight: 2.8,
+  exposure: 0.7,
+  ambient: 0,
+  hemisphere: 0,
+  keyLight: 4.6,
+  fillLight: 0.5,
   background: '#070b12',
-  overlay: 0.15,
-  bmsFloorGap: 2.5,
+  overlay: 0.28,
+  bmsFloorGap: 0.25,
   hotspotOffsets: {
-    about: { x: 0, y: 0, z: 0 },
-    computerVision: { x: 0, y: 0, z: 0 },
-    bms: { x: 0, y: 0, z: 0 },
-    website: { x: 0, y: 0, z: 0 },
-    chatbot: { x: 0, y: 0, z: 0 },
+    about: { x: 0, y: 1.95, z: 0 },
+    computerVision: { x: 0, y: 1.7, z: 0 },
+    bms: { x: 0, y: 2.5, z: 0 },
+    website: { x: 0, y: 1.9, z: 0 },
+    chatbot: { x: 0, y: 1.7, z: 0 },
   },
 }
 

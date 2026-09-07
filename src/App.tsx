@@ -139,7 +139,7 @@ function App() {
           <WebGLBoundary>
             <Canvas
               className={`scene-canvas-element ${isSceneReady ? 'canvas-ready' : 'canvas-loading'}`}
-              camera={{ position: [-58, 42, -72], fov: 50, near: 0.1, far: 500 }}
+              camera={{ position: [-64.8, 29, -62.4], fov: 44, near: 0.1, far: 500 }}
               dpr={[1, 1.5]}
               gl={{ antialias: true, powerPreference: 'high-performance' }}
               frameloop="demand"
