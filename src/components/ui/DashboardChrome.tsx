@@ -12,28 +12,6 @@ export function DashboardHeader() {
 
   return (
     <header className="dashboard-header">
-      {/* Accessibility Skip Link */}
-      <a
-        href="#main-content"
-        className="skip-to-content"
-        style={{
-          position: 'absolute',
-          top: '-40px',
-          left: '10px',
-          background: '#c7f36b',
-          color: '#080c0b',
-          padding: '6px 12px',
-          zIndex: 100,
-          fontWeight: 700,
-          borderRadius: '4px',
-          transition: 'top 0.2s',
-        }}
-        onFocus={(e) => (e.target.style.top = '10px')}
-        onBlur={(e) => (e.target.style.top = '-40px')}
-      >
-        {isId ? 'Lewati ke Konten' : 'Skip to Content'}
-      </a>
-
       {/* Brand Identity */}
       <div className="header-identity" onClick={closeSection} style={{ cursor: 'pointer' }}>
         <strong>DIKRI ALI</strong>
