@@ -305,18 +305,120 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   position: absolute;
   right: 0;
   top: 0;
-  width: min(640px, 75%);
+  width: min(640px, 60vw);
   height: 100%;
-  padding: 26px 30px 40px;
+  padding: 24px 28px 40px;
   overflow-y: auto;
+  border-left: 1px solid var(--line);
+  background: rgba(10, 15, 13, 0.96);
+  backdrop-filter: blur(24px);
   pointer-events: auto;
-  border-left: 1px solid var(--line-strong);
-  background: rgba(10,15,13,.95);
-  box-shadow: -30px 0 80px rgba(0,0,0,.38);
-  backdrop-filter: blur(22px);
-  animation: panel-in .45s cubic-bezier(.2,.8,.2,1) both;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(56, 189, 248, 0.4) rgba(10, 15, 13, 0.6);
+  animation: panel-in .25s ease;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUT CALIBRATION (TABLETS, IPAD, LAPTOPS, ULTRA-WIDE)
+   ========================================================================== */
+
+/* Large screens / 2K / 4K / Ultra-wide */
+@media (min-width: 1600px) {
+  .app-shell {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .content-layer {
+    inset: 68px 0 32px 240px;
+  }
+  .portfolio-panel {
+    width: min(720px, 50vw);
+    padding: 32px 36px 48px;
+  }
+  .scene-intro {
+    left: 48px;
+    bottom: 56px;
+    max-width: 460px;
+  }
+}
+
+/* Standard Laptops & Small Desktops (1025px - 1440px) */
+@media (min-width: 1025px) and (max-width: 1440px) {
+  .app-shell {
+    grid-template-columns: 190px minmax(0, 1fr);
+  }
+  .content-layer {
+    inset: 68px 0 32px 190px;
+  }
+  .portfolio-panel {
+    width: min(580px, 65vw);
+    padding: 20px 24px 36px;
+  }
+  .scene-intro {
+    left: 28px;
+    bottom: 40px;
+    max-width: 380px;
+  }
+}
+
+/* Tablets & iPads (Portrait & Landscape: 769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 80px minmax(0, 1fr);
+    grid-template-rows: 60px minmax(0, 1fr) 28px;
+  }
+  .dashboard-header {
+    height: 60px;
+    padding: 0 16px;
+  }
+  .header-identity strong {
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+  }
+  .header-identity span {
+    display: none;
+  }
+  .sidebar {
+    padding: 14px 8px;
+  }
+  .sidebar-meta {
+    display: none;
+  }
+  .navigation {
+    padding: 12px 4px;
+    gap: 6px;
+  }
+  .nav-item {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 4px;
+    text-align: center;
+    gap: 4px;
+  }
+  .nav-item-num {
+    font-size: 0.58rem;
+  }
+  .nav-item-title {
+    font-size: 0.62rem;
+  }
+  .content-layer {
+    inset: 60px 0 28px 80px;
+  }
+  .portfolio-panel {
+    width: min(520px, 80vw);
+    padding: 18px 20px 32px;
+  }
+  .scene-intro {
+    left: 20px;
+    bottom: 36px;
+    max-width: 320px;
+  }
+  .scene-intro h1 {
+    font-size: 2.2rem;
+  }
+  .scene-intro p {
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
 }
 .portfolio-panel::-webkit-scrollbar {
   width: 5px;
@@ -1021,6 +1123,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
     font-size: 0.72rem !important;
   }
   .mobile-modal-back-btn { display: flex !important; background: transparent; border: 0; padding: 4px; cursor: pointer; }
+  .panel-close { display: none !important; }
 
   /* Mobile 3D Hotspot Label Scaling */
   .object-hotspot {

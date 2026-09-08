@@ -26,27 +26,49 @@ export function CameraController() {
     if (!orbit) return
     const preset = activePresets[activeSection]
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const duration = reducedMotion ? 0 : 1.05
+    const duration = reducedMotion ? 0 : 1.25
     setIsTransitioning(true)
 
     const update = () => {
       orbit.update()
+      invalidate()
     }
     const complete = () => {
       setIsTransitioning(false)
       update()
     }
+
+    // Ultra-smooth custom cubic-bezier ease for cinema camera feel
+    const customEase = 'power3.inOut'
+
     const positionTween = gsap.to(camera.position, {
-      x: preset.position[0], y: preset.position[1], z: preset.position[2], duration,
-      ease: 'power2.inOut', onUpdate: update, onComplete: complete,
+      x: preset.position[0],
+      y: preset.position[1],
+      z: preset.position[2],
+      duration,
+      ease: customEase,
+      onUpdate: update,
+      onComplete: complete,
+      overwrite: 'auto',
     })
     const targetTween = gsap.to(orbit.target, {
-      x: preset.target[0], y: preset.target[1], z: preset.target[2], duration,
-      ease: 'power2.inOut', onUpdate: update,
+      x: preset.target[0],
+      y: preset.target[1],
+      z: preset.target[2],
+      duration,
+      ease: customEase,
+      onUpdate: update,
+      overwrite: 'auto',
     })
     const fovTween = camera instanceof PerspectiveCamera ? gsap.to(camera, {
-      fov: preset.fov, duration, ease: 'power2.inOut',
-      onUpdate: () => { camera.updateProjectionMatrix() },
+      fov: preset.fov,
+      duration,
+      ease: customEase,
+      onUpdate: () => {
+        camera.updateProjectionMatrix()
+        invalidate()
+      },
+      overwrite: 'auto',
     }) : null
 
     return () => {
