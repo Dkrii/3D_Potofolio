@@ -402,7 +402,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
 
     bms: {
       eyebrow: '3D Project & Digital Twin',
-      title: '3D Building Management System (BMS)',
+      title: '3D Building Management System',
       description: 'Interactive 3D Digital Twin visualization project built with Three.js to monitor building telemetry, HVAC status, ambient environmental sensors, and CCTV surveillance networks per floor.',
       media: [
         {
