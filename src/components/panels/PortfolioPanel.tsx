@@ -91,16 +91,6 @@ export function PortfolioPanel() {
         className="portfolio-panel scrollable-panel"
         aria-labelledby="panel-title"
       >
-        {/* Floating Mobile Bottom Back FAB */}
-        <button
-          type="button"
-          onClick={closeSection}
-          className="mobile-floating-back-fab"
-          aria-label="Kembali ke ringkasan proyek"
-        >
-          <ArrowLeft size={16} />
-          <span>{language === 'id' ? 'Kembali ke Daftar' : 'Back to Projects'}</span>
-        </button>
         <div className="detail-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <button
@@ -110,9 +100,11 @@ export function PortfolioPanel() {
               aria-label="Back to overview"
             >
               <ArrowLeft size={18} color="#38bdf8" />
-              <span style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600 }}>Kembali</span>
+              <span style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600 }}>
+                {language === 'id' ? 'Kembali' : 'Back'}
+              </span>
             </button>
-            <span>{sectionIds[activeSection]} / {activeSection === 'bms' ? 'DIGITAL TWIN DEMO' : 'PROJECT OVERVIEW'}</span>
+            <span className="detail-header-tag">{sectionIds[activeSection]} / {activeSection === 'bms' ? 'DIGITAL TWIN DEMO' : 'PROJECT OVERVIEW'}</span>
           </div>
           <button className="panel-close" type="button" onClick={closeSection} aria-label="Close detail panel">
             <X size={18} />
