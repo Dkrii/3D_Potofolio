@@ -813,7 +813,39 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   background-attachment: local, local, scroll, scroll;
 }
 
-/* Mobile First-Time Optimal View Pop-up */
+/* Mobile Floating Back FAB in Project Panel */
+.mobile-floating-back-fab {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-floating-back-fab {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 24px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 100 !important;
+    background: rgba(15, 23, 42, 0.92) !important;
+    border: 1px solid #38bdf8 !important;
+    color: #38bdf8 !important;
+    padding: 10px 20px !important;
+    border-radius: 30px !important;
+    font: 700 0.8rem var(--mono) !important;
+    align-items: center !important;
+    gap: 8px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75), 0 0 12px rgba(56, 189, 248, 0.35) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease, background 0.2s ease !important;
+  }
+  .mobile-floating-back-fab:active {
+    transform: translateX(-50%) scale(0.95) !important;
+    background: #38bdf8 !important;
+    color: #080c0b !important;
+  }
+}
 .mobile-notice-backdrop {
   position: fixed;
   inset: 0;
