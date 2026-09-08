@@ -143,7 +143,7 @@ function App() {
               camera={{ position: [-64.8, 29, -62.4], fov: 44, near: 0.1, far: 500 }}
               dpr={[1, 1.5]}
               gl={{ antialias: true, powerPreference: 'high-performance' }}
-              frameloop="demand"
+              frameloop="always"
             >
               <Suspense fallback={<SceneLoader />}>
                 <PortfolioScene />

@@ -31,7 +31,6 @@ export function CameraController() {
 
     const update = () => {
       orbit.update()
-      invalidate()
     }
     const complete = () => {
       setIsTransitioning(false)
@@ -47,7 +46,7 @@ export function CameraController() {
     })
     const fovTween = camera instanceof PerspectiveCamera ? gsap.to(camera, {
       fov: preset.fov, duration, ease: 'power2.inOut',
-      onUpdate: () => { camera.updateProjectionMatrix(); invalidate() },
+      onUpdate: () => { camera.updateProjectionMatrix() },
     }) : null
 
     return () => {
