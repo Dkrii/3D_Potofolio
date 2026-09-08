@@ -172,7 +172,8 @@ function App() {
             </div>
           )}
 
-          {!isMobile && <SceneControls />}
+          {/* Scene & Camera Dev Controls (Render in dev mode & on desktop) */}
+          {(import.meta.env.DEV || !isMobile) && <SceneControls />}
           {import.meta.env.DEV && <CameraDevControls />}
           <p className="scene-hint">
             <span>Drag</span> orbit <span>Scroll</span> zoom <span>Right-drag</span> pan

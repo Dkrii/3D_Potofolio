@@ -15,6 +15,8 @@ const labels: Record<PortfolioSection, string> = {
 export function CameraDevControls() {
   const [isVisible, setIsVisible] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<string | null>(null)
   const section = usePortfolioStore((state) => state.activeSection)
   const openSection = usePortfolioStore((state) => state.openSection)
   const closeSection = usePortfolioStore((state) => state.closeSection)
@@ -46,6 +48,34 @@ export function CameraDevControls() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const saveDirectlyToCode = async () => {
+    try {
+      setIsSaving(true)
+      setSaveStatus('Saving...')
+
+      const payload = {
+        desktopPresets: useCameraDevStore.getState().desktopPresets,
+        mobilePresets: useCameraDevStore.getState().mobilePresets,
+        sceneSettings: usePortfolioStore.getState().sceneSettings,
+      }
+
+      const res = await fetch('/__api/save-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) throw new Error('Failed to save')
+      setSaveStatus('✅ Saved to Code!')
+      setTimeout(() => setSaveStatus(null), 3000)
+    } catch {
+      setSaveStatus('❌ Save Error')
+      setTimeout(() => setSaveStatus(null), 3000)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   if (!isVisible) return <button className="camera-dev-toggle" type="button" onClick={() => setIsVisible(true)}>Camera editor</button>
 
   return (
@@ -57,6 +87,33 @@ export function CameraDevControls() {
           <button type="button" onClick={() => { setEditMode(false); setIsVisible(false) }}>Hide</button>
         </div>
       </header>
+
+      {/* Direct Save Button */}
+      <div style={{ margin: '8px 0 4px' }}>
+        <button
+          type="button"
+          onClick={saveDirectlyToCode}
+          disabled={isSaving}
+          style={{
+            width: '100%',
+            background: 'linear-gradient(90deg, #c7f36b, #38bdf8)',
+            color: '#080c0b',
+            fontWeight: 700,
+            fontSize: '0.8rem',
+            padding: '7px 10px',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            boxShadow: '0 2px 8px rgba(199, 243, 107, 0.3)',
+          }}
+        >
+          {saveStatus ? saveStatus : '💾 Save Directly to Code'}
+        </button>
+      </div>
 
       {/* Viewport Mode Switcher */}
       <div className="camera-mode-tabs" style={{ display: 'flex', gap: '4px', margin: '8px 0' }}>
@@ -122,7 +179,7 @@ export function CameraDevControls() {
       </div>
 
       <small>
-        {editMode ? `Editing ${viewportMode.toUpperCase()} camera live in-memory. Click Copy Code when done.` : `Enable Edit to orbit & tweak live.`}
+        {editMode ? `Editing ${viewportMode.toUpperCase()} camera live. Click "Save Directly to Code" to write changes to files.` : `Enable Edit to orbit & tweak live.`}
       </small>
     </section>
   )

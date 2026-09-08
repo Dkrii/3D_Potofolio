@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { defaultSceneSettings, type HotspotOffset, type HotspotSection, type SceneSettings, usePortfolioStore } from '../../store/portfolioStore'
+import { type HotspotOffset, type HotspotSection, type SceneSettings, usePortfolioStore } from '../../store/portfolioStore'
+import { useCameraDevStore } from '../../store/cameraDevStore'
 
 const sliders: { key: Exclude<keyof SceneSettings, 'background' | 'hotspotOffsets' | 'bmsFloorGap'>; label: string; min: number; max: number; step: number }[] = [
-  { key: 'exposure', label: 'Exposure', min: 0.5, max: 2.5, step: 0.05 },
+  { key: 'exposure', label: 'Exposure', min: 0.2, max: 3.0, step: 0.05 },
   { key: 'ambient', label: 'Ambient', min: 0, max: 6, step: 0.1 },
   { key: 'hemisphere', label: 'Hemisphere', min: 0, max: 6, step: 0.1 },
   { key: 'keyLight', label: 'Key light', min: 0, max: 8, step: 0.1 },
@@ -11,11 +12,11 @@ const sliders: { key: Exclude<keyof SceneSettings, 'background' | 'hotspotOffset
 ]
 
 const hotspotTargets: { key: HotspotSection; label: string }[] = [
-  { key: 'about', label: 'About Label' },
-  { key: 'computerVision', label: 'Computer Vision Label' },
-  { key: 'bms', label: 'BMS Digital Twin Label' },
-  { key: 'website', label: 'Website Showcase Label' },
-  { key: 'chatbot', label: 'Chatbot Sunda Label' },
+  { key: 'about', label: 'About (Developer Desk)' },
+  { key: 'computerVision', label: 'Computer Vision (Corner TV)' },
+  { key: 'bms', label: 'BMS (Main Wall Screen)' },
+  { key: 'website', label: 'Website (Side Monitor)' },
+  { key: 'chatbot', label: 'Chatbot (Small Monitor)' },
 ]
 
 export function SceneControls() {
@@ -27,6 +28,8 @@ export function SceneControls() {
 
   const [selectedHotspot, setSelectedHotspot] = useState<HotspotSection>('about')
   const [copied, setCopied] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<string | null>(null)
 
   const currentOffset = settings.hotspotOffsets[selectedHotspot] ?? { x: 0, y: 0, z: 0 }
 
@@ -47,6 +50,34 @@ export function SceneControls() {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const saveDirectlyToCode = async () => {
+    try {
+      setIsSaving(true)
+      setSaveStatus('Saving...')
+
+      const payload = {
+        desktopPresets: useCameraDevStore.getState().desktopPresets,
+        mobilePresets: useCameraDevStore.getState().mobilePresets,
+        sceneSettings: usePortfolioStore.getState().sceneSettings,
+      }
+
+      const res = await fetch('/__api/save-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      if (!res.ok) throw new Error('Failed to save')
+      setSaveStatus('✅ Saved to Code!')
+      setTimeout(() => setSaveStatus(null), 3000)
+    } catch {
+      setSaveStatus('❌ Save Error')
+      setTimeout(() => setSaveStatus(null), 3000)
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
   return (
     <div className="scene-controls">
       <button className="scene-controls-toggle" type="button" aria-expanded={isOpen} aria-controls="scene-controls-panel" onClick={toggle}>
@@ -61,6 +92,33 @@ export function SceneControls() {
               <button type="button" onClick={reset}>Reset</button>
             </div>
           </header>
+
+          {/* Direct Save Button */}
+          <div style={{ margin: '8px 0 4px' }}>
+            <button
+              type="button"
+              onClick={saveDirectlyToCode}
+              disabled={isSaving}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(90deg, #c7f36b, #38bdf8)',
+                color: '#080c0b',
+                fontWeight: 700,
+                fontSize: '0.8rem',
+                padding: '7px 10px',
+                borderRadius: '5px',
+                cursor: 'pointer',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 8px rgba(199, 243, 107, 0.3)',
+              }}
+            >
+              {saveStatus ? saveStatus : '💾 Save Directly to Code'}
+            </button>
+          </div>
 
           {sliders.map(({ key, label, min, max, step }) => (
             <label key={key}>
@@ -122,16 +180,14 @@ export function SceneControls() {
               setSetting('ambient', 3)
               setSetting('hemisphere', 3.5)
               setSetting('keyLight', 4.5)
-              setSetting('fillLight', 3.5)
-              setSetting('overlay', 0)
-              setSetting('background', defaultSceneSettings.background)
+              setSetting('fillLight', 3)
+              setSetting('overlay', 0.12)
             }}
           >
-            Bright preset
+            Apply Bright Preset
           </button>
         </section>
       )}
     </div>
   )
 }
-
