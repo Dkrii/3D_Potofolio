@@ -43,13 +43,20 @@ export function CameraController() {
     const customEase = 'power3.inOut'
 
     // Responsive aspect ratio compensation:
-    // If aspect ratio < 1.15 (Tablet Portrait / iPad Pro / Square Viewport),
-    // proportionally expand FOV so 3D Room isn't cut off on the sides.
+    // Standard desktop baseline is aspect ratio 16:9 (~1.77) and 16:10 (~1.60).
+    // On narrower laptop screens (1366x768 / 1280x800 / split-screen),
+    // dynamically adjust FOV so horizontal field-of-view stays constant and 3D objects don't get cropped.
     const aspect = size.width / Math.max(size.height, 1)
     let targetFov = preset.fov
-    if (viewportMode === 'desktop' && aspect < 1.15) {
-      const fovMultiplier = Math.min(1.4, Math.max(1.0, 1.15 / aspect))
-      targetFov = Math.round(preset.fov * fovMultiplier)
+    if (viewportMode === 'desktop') {
+      const standardAspect = 1.77
+      if (aspect < standardAspect) {
+        // Horizontal FOV preservation formula:
+        // tan(fov_v / 2) = tan(fov_standard / 2) * (standardAspect / aspect)
+        const radFov = (preset.fov * Math.PI) / 180
+        const compensatedRad = 2 * Math.atan(Math.tan(radFov / 2) * (standardAspect / aspect))
+        targetFov = Math.min(85, Math.max(preset.fov, (compensatedRad * 180) / Math.PI))
+      }
     }
 
     const positionTween = gsap.to(camera.position, {

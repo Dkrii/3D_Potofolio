@@ -352,7 +352,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
     inset: 68px 0 32px 190px;
   }
   .portfolio-panel {
-    width: min(580px, 65vw);
+    width: min(540px, 50vw);
     padding: 20px 24px 36px;
   }
   .scene-intro {
