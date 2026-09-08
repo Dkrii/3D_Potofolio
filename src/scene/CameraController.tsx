@@ -8,6 +8,7 @@ import { usePortfolioStore } from '../store/portfolioStore'
 
 export function CameraController() {
   const camera = useThree((state) => state.camera)
+  const size = useThree((state) => state.size)
   const invalidate = useThree((state) => state.invalidate)
   const activeSection = usePortfolioStore((state) => state.activeSection)
   const viewportMode = useCameraDevStore((state) => state.viewportMode)
@@ -41,6 +42,16 @@ export function CameraController() {
     // Ultra-smooth custom cubic-bezier ease for cinema camera feel
     const customEase = 'power3.inOut'
 
+    // Responsive aspect ratio compensation:
+    // If aspect ratio < 1.15 (Tablet Portrait / iPad Pro / Square Viewport),
+    // proportionally expand FOV so 3D Room isn't cut off on the sides.
+    const aspect = size.width / Math.max(size.height, 1)
+    let targetFov = preset.fov
+    if (viewportMode === 'desktop' && aspect < 1.15) {
+      const fovMultiplier = Math.min(1.4, Math.max(1.0, 1.15 / aspect))
+      targetFov = Math.round(preset.fov * fovMultiplier)
+    }
+
     const positionTween = gsap.to(camera.position, {
       x: preset.position[0],
       y: preset.position[1],
@@ -61,7 +72,7 @@ export function CameraController() {
       overwrite: 'auto',
     })
     const fovTween = camera instanceof PerspectiveCamera ? gsap.to(camera, {
-      fov: preset.fov,
+      fov: targetFov,
       duration,
       ease: customEase,
       onUpdate: () => {
@@ -76,7 +87,7 @@ export function CameraController() {
       targetTween.kill()
       fovTween?.kill()
     }
-  }, [activeSection, camera, invalidate, activePresets])
+  }, [activeSection, camera, invalidate, activePresets, size.width, size.height, viewportMode])
 
   const captureView = () => {
     const orbit = controls.current

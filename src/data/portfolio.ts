@@ -136,7 +136,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
 
     computerVision: {
       eyebrow: 'Applied AI & Industrial Safety Inspection',
-      title: 'Deteksi Safety (PPE Video & Live Stream Detection)',
+      title: 'Deteksi Safety',
       description: 'Sistem pengawasan Computer Vision berbasis Web & FastAPI yang dikembangkan untuk secara otomatis mendeteksi kepatuhan penggunaan Alat Pelindung Diri (APD/PPE: Helmet, Person, Vest) pada lingkungan konstruksi dan manufaktur. Catatan: Proyek ini merupakan prototipe aktif dengan dataset dasar (3 kelas) yang sedang dalam tahap ekspansi dataset untuk meningkatkan variasi lingkungan.',
       media: [
         {
@@ -181,7 +181,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
 
     bms: {
       eyebrow: '3D Project & Digital Twin',
-      title: '3D Building Management System (BMS)',
+      title: '3D Building Management System ',
       description: 'Proyek visualisasi 3D Digital Twin interaktif yang dikembangkan menggunakan Three.js untuk memantau kondisi telemetri gedung, status HVAC, sensor lingkungan, dan jaringan pengawasan CCTV secara per-lantai.',
       media: [
         {
@@ -269,7 +269,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
 
     chatbot: {
       eyebrow: 'Generative AI & Cultural NLP Engine',
-      title: 'Chatbot Sunda (Paribasa & Knowledge RAG)',
+      title: 'Chatbot Sunda',
       description: 'Platform AI Chatbot interaktif yang menggunakan arsitektur Retrieval-Augmented Generation (RAG) untuk menjawab pertanyaan dan melestarikan pengetahuan bahasa serta kebudayaan Sunda (seperti 100+ Paribasa/Babasan terstruktur dan informasi daerah).',
       media: [
         {
@@ -357,7 +357,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
 
     computerVision: {
       eyebrow: 'Applied AI & Industrial Safety Inspection',
-      title: 'Safety Detection (PPE Video & Live Stream Detection)',
+      title: 'Safety Detection',
       description: 'Web & FastAPI-based Computer Vision inspection system built to automatically enforce Personal Protective Equipment (PPE: Helmet, Person, Vest) compliance for construction and manufacturing workers. Note: This is an active prototype trained on a baseline 3-class dataset currently undergoing expansion for broader environmental generalization.',
       media: [
         {
@@ -490,7 +490,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
 
     chatbot: {
       eyebrow: 'Generative AI & Cultural NLP Engine',
-      title: 'Chatbot Sunda (Paribasa & Knowledge RAG)',
+      title: 'Chatbot Sunda ',
       description: 'Interactive AI Chatbot platform utilizing Retrieval-Augmented Generation (RAG) architecture to answer questions and preserve Sundanese language and cultural heritage (including 113+ structured Paribasa/proverbs and regional knowledge).',
       media: [
         {

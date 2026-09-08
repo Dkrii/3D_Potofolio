@@ -47,7 +47,7 @@ button { font: inherit; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !important; outline-offset: 3px !important; }
 
 .app-shell {
-  position: relative; display: grid; width: 100%; height: 100%; overflow: hidden;
+  position: relative; display: grid; width: 100%; height: 100vh; height: 100dvh; overflow: hidden;
   grid-template-columns: 204px minmax(0, 1fr); grid-template-rows: 68px minmax(0, 1fr) 32px;
   color: var(--ink); background: var(--void); isolation: isolate;
 }
@@ -91,13 +91,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
 .sidebar-meta strong { font: 600 .72rem var(--body); } .sidebar-meta small { color: var(--muted); font: .56rem var(--mono); }
 
 /* 3D Scene Workspace */
-.scene-workspace { position: relative; grid-column: 2; grid-row: 2; min-width: 0; overflow: hidden; background: radial-gradient(circle at 60% 45%, #18241f 0, #0c1210 50%, #080c0b 100%); }
+.scene-workspace { position: relative; grid-column: 2; grid-row: 2; min-width: 0; overflow: hidden; background: radial-gradient(circle at 60% 45%, #18241f 0, #0c1210 50%, #080c0b 100%); transform: translateZ(0); }
 .scene-workspace::before { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: rgba(8,12,11,var(--scene-overlay)); }
 .scene-workspace canvas { position: relative; z-index: 0; }
 
 .scene-canvas-element {
   opacity: 0;
   transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  contain: strict;
 }
 .scene-canvas-element.canvas-ready {
   opacity: 1;
@@ -311,10 +312,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   overflow-y: auto;
   border-left: 1px solid var(--line);
   background: rgba(10, 15, 13, 0.96);
-  backdrop-filter: blur(24px);
   pointer-events: auto;
-  animation: panel-in .25s ease;
+  animation: panel-in .22s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  contain: paint;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
 }
 
 /* ==========================================================================
@@ -359,11 +362,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   }
 }
 
-/* Tablets & iPads (Portrait & Landscape: 769px - 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
+/* Tablets & iPads (Portrait & Landscape: 769px - 1024px, plus iPad Pro 1024x1366 portrait) */
+@media (min-width: 769px) and (max-width: 1024px), (min-width: 769px) and (max-width: 1366px) and (orientation: portrait) {
   .app-shell {
-    grid-template-columns: 80px minmax(0, 1fr);
+    grid-template-columns: 72px minmax(0, 1fr);
     grid-template-rows: 60px minmax(0, 1fr) 28px;
+    height: 100dvh;
   }
   .dashboard-header {
     height: 60px;
@@ -377,47 +381,92 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
     display: none;
   }
   .sidebar {
-    padding: 14px 8px;
+    padding: 10px 4px;
+    width: 72px;
   }
   .sidebar-meta {
     display: none;
   }
   .navigation {
-    padding: 12px 4px;
-    gap: 6px;
+    padding: 8px 2px;
+    gap: 8px;
+    align-items: center;
   }
-  .nav-item {
+  .nav-label {
+    display: none;
+  }
+  .nav-primary {
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px 4px;
-    text-align: center;
+    padding: 10px 4px;
+    width: 58px;
+    min-height: 52px;
+    border-radius: 8px;
     gap: 4px;
+    text-align: center;
   }
-  .nav-item-num {
+  .nav-primary .nav-text {
     font-size: 0.58rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 54px;
   }
-  .nav-item-title {
-    font-size: 0.62rem;
+  .project-submenu {
+    margin: 4px 0 0 0;
+    padding: 0;
+    border-left: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+  }
+  .project-submenu button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 2px;
+    width: 54px;
+    border-radius: 6px;
+    gap: 2px;
+  }
+  .project-submenu .nav-text {
+    font-size: 0.52rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50px;
   }
   .content-layer {
-    inset: 60px 0 28px 80px;
+    inset: 60px 0 28px 72px;
   }
   .portfolio-panel {
-    width: min(520px, 80vw);
+    width: min(540px, 85vw);
     padding: 18px 20px 32px;
   }
+  
+  /* Reposition hero intro away from 3D model center on portrait tablets */
   .scene-intro {
-    left: 20px;
-    bottom: 36px;
-    max-width: 320px;
+    left: 24px;
+    top: auto;
+    bottom: 42px;
+    transform: none;
+    width: min(340px, 75%);
+    max-width: 340px;
+    pointer-events: none;
   }
   .scene-intro h1 {
-    font-size: 2.2rem;
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
   }
   .scene-intro p {
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     line-height: 1.45;
+    margin: 14px 0 12px;
   }
 }
 .portfolio-panel::-webkit-scrollbar {
@@ -580,20 +629,22 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   z-index: 200;
   pointer-events: auto;
   background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+  will-change: opacity;
+  transform: translateZ(0);
 }
 
 .media-lightbox-backdrop.lightbox-enter {
-  animation: lightboxBackdropIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: lightboxBackdropIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .media-lightbox-backdrop.lightbox-exit {
-  animation: lightboxBackdropOut 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: lightboxBackdropOut 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .media-lightbox-modal {
@@ -609,48 +660,42 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   display: flex;
   flex-direction: column;
   gap: 12px;
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.95), 0 0 40px rgba(56, 189, 248, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
   transform-origin: center center;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
 
 .media-lightbox-modal.modal-enter {
-  animation: lightboxModalIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: lightboxModalIn 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .media-lightbox-modal.modal-exit {
-  animation: lightboxModalOut 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: lightboxModalOut 0.18s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 @keyframes lightboxBackdropIn {
   0% {
     opacity: 0;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
   }
   100% {
     opacity: 1;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
   }
 }
 
 @keyframes lightboxBackdropOut {
   0% {
     opacity: 1;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
   }
   100% {
     opacity: 0;
-    backdrop-filter: blur(0px);
-    -webkit-backdrop-filter: blur(0px);
   }
 }
 
 @keyframes lightboxModalIn {
   0% {
     opacity: 0;
-    transform: scale(0.92) translateY(14px);
+    transform: scale(0.95) translateY(8px);
   }
   100% {
     opacity: 1;
@@ -665,7 +710,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   }
   100% {
     opacity: 0;
-    transform: scale(0.94) translateY(10px);
+    transform: scale(0.96) translateY(6px);
   }
 }
 
@@ -934,8 +979,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
   box-shadow: 0 0 8px var(--acid);
 }
 
-@keyframes reveal { from { opacity: 0; transform: translateY(calc(-50% + 25px)); } }
-@keyframes panel-in { from { opacity: 0; transform: translateX(35px); } }
+@keyframes reveal { from { opacity: 0; transform: translateY(calc(-50% + 15px)); } to { opacity: 1; transform: translateY(-50%); } }
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translate3d(25px, 0, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
 
 /* ==========================================================================
    MOBILE-SPECIFIC RESTRUCTURE (<768px)

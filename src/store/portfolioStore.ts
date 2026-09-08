@@ -30,21 +30,41 @@ export interface TelemetryState {
 }
 
 export const defaultSceneSettings: SceneSettings = {
-  exposure: 0.7,
-  ambient: 0,
-  hemisphere: 0,
-  keyLight: 4.6,
-  fillLight: 0.5,
-  background: '#070b12',
-  overlay: 0.28,
-  bmsFloorGap: 0.25,
-  hotspotOffsets: {
-    about: { x: 0, y: 1.95, z: 0 },
-    computerVision: { x: 0, y: 1.7, z: 0 },
-    bms: { x: 0, y: 2.5, z: 0 },
-    website: { x: 0, y: 1.9, z: 0 },
-    chatbot: { x: 0, y: 1.7, z: 0 },
-  },
+  "exposure": 0.7,
+  "ambient": 0,
+  "hemisphere": 0,
+  "keyLight": 4.6,
+  "fillLight": 0.5,
+  "background": "#070b12",
+  "overlay": 0.28,
+  "bmsFloorGap": 0.25,
+  "hotspotOffsets": {
+    "about": {
+      "x": 0,
+      "y": 1.95,
+      "z": 0
+    },
+    "computerVision": {
+      "x": 0,
+      "y": 1.7,
+      "z": 0
+    },
+    "bms": {
+      "x": 0,
+      "y": 2.5,
+      "z": 0
+    },
+    "website": {
+      "x": 0,
+      "y": 1.9,
+      "z": 0
+    },
+    "chatbot": {
+      "x": 0,
+      "y": 1.7,
+      "z": 0
+    }
+  }
 }
 
 interface PortfolioState {

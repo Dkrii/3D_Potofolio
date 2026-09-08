@@ -23,6 +23,8 @@ export function PortfolioModel() {
   const gltf = useGLTF(modelUrl)
   const scene = useMemo(() => gltf.scene.clone(true), [gltf.scene])
   const invalidate = useThree((state) => state.invalidate)
+  const gl = useThree((state) => state.gl)
+  const camera = useThree((state) => state.camera)
 
   const hotspots = useMemo(() => {
     scene.updateMatrixWorld(true)
@@ -98,12 +100,21 @@ export function PortfolioModel() {
       sections.set(section, [...(sections.get(section) ?? []), object])
     })
     meshesBySection.current = sections
+
+    // Warmup & precompile shaders to prevent stutter during camera flight
+    try {
+      scene.updateMatrixWorld(true)
+      gl.compile(scene, camera)
+    } catch {
+      // Ignore if WebGL context is currently compiling or not ready
+    }
+
     setSceneReady(true)
     return () => {
       objects.clear()
       setSceneReady(false)
     }
-  }, [scene, setSceneReady])
+  }, [scene, setSceneReady, gl, camera])
 
   useEffect(() => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches

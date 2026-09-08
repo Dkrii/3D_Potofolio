@@ -141,9 +141,15 @@ function App() {
             <Canvas
               className={`scene-canvas-element ${isSceneReady ? 'canvas-ready' : 'canvas-loading'}`}
               camera={{ position: [-64.8, 29, -62.4], fov: 44, near: 0.1, far: 500 }}
-              dpr={[1, 1.5]}
-              gl={{ antialias: true, powerPreference: 'high-performance' }}
-              frameloop="always"
+              dpr={isMobile ? [1, 1.25] : [1, Math.min(window.devicePixelRatio || 1, 1.5)]}
+              gl={{
+                antialias: true,
+                powerPreference: 'high-performance',
+                precision: 'highp',
+                stencil: false,
+                depth: true,
+              }}
+              frameloop={isPanelOpen && !isMobile ? 'demand' : 'always'}
             >
               <Suspense fallback={<SceneLoader />}>
                 <PortfolioScene />

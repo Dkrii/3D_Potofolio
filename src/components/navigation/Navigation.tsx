@@ -89,8 +89,8 @@ export function Navigation() {
   }[language]
 
   return (
-    <nav className="navigation" aria-label="Portfolio navigation" style={{ padding: '24px 14px' }}>
-      <p className="nav-label" style={{ fontSize: '0.72rem', letterSpacing: '0.14em', marginBottom: '16px', color: '#64748b' }}>{navLabels.nav}</p>
+    <nav className="navigation" aria-label="Portfolio navigation">
+      <p className="nav-label">{navLabels.nav}</p>
 
       {/* Overview */}
       <button
@@ -98,17 +98,10 @@ export function Navigation() {
         type="button"
         aria-current={activeSection === 'overview' ? 'page' : undefined}
         onClick={closeSection}
-        style={{
-          padding: '10px 12px',
-          margin: '3px 0',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          color: activeSection === 'overview' ? '#c7f36b' : '#94a3b8',
-        }}
+        title={navLabels.overview}
       >
-        <Home size={18} color={activeSection === 'overview' ? '#c7f36b' : '#38bdf8'} style={{ flexShrink: 0 }} />
-        <span style={{ fontSize: '0.9rem', fontWeight: activeSection === 'overview' ? 700 : 500 }}>{navLabels.overview}</span>
+        <Home size={18} className="nav-icon" color={activeSection === 'overview' ? '#c7f36b' : '#38bdf8'} />
+        <span className="nav-text">{navLabels.overview}</span>
       </button>
 
       {/* About Me */}
@@ -117,17 +110,10 @@ export function Navigation() {
         type="button"
         aria-current={activeSection === 'about' ? 'page' : undefined}
         onClick={() => openSection('about')}
-        style={{
-          padding: '10px 12px',
-          margin: '3px 0',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          color: activeSection === 'about' ? '#c7f36b' : '#94a3b8',
-        }}
+        title={navLabels.about}
       >
-        <User size={18} color={activeSection === 'about' ? '#c7f36b' : '#38bdf8'} style={{ flexShrink: 0 }} />
-        <span style={{ fontSize: '0.9rem', fontWeight: activeSection === 'about' ? 700 : 500 }}>{navLabels.about}</span>
+        <User size={18} className="nav-icon" color={activeSection === 'about' ? '#c7f36b' : '#38bdf8'} />
+        <span className="nav-text">{navLabels.about}</span>
       </button>
 
       {/* Projects */}
@@ -139,21 +125,14 @@ export function Navigation() {
           aria-expanded={projectsOpen}
           aria-controls="project-navigation"
           onClick={() => setProjectsOpen((open) => !open)}
-          style={{
-            padding: '10px 12px',
-            margin: '3px 0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            color: projectActive ? '#c7f36b' : '#94a3b8',
-          }}
+          title={navLabels.projects}
         >
-          <Rocket size={18} color={projectActive ? '#c7f36b' : '#38bdf8'} style={{ flexShrink: 0 }} />
-          <span style={{ fontSize: '0.9rem', fontWeight: projectActive ? 700 : 500 }}>{navLabels.projects}</span>
+          <Rocket size={18} className="nav-icon" color={projectActive ? '#c7f36b' : '#38bdf8'} />
+          <span className="nav-text">{navLabels.projects}</span>
         </button>
 
         {projectsOpen && (
-          <div id="project-navigation" className="project-submenu" style={{ margin: '4px 0 8px 12px', paddingLeft: '12px', borderLeft: '1px solid rgba(56, 189, 248, 0.2)' }}>
+          <div id="project-navigation" className="project-submenu">
             {projectConfig.map((item) => {
               const isActive = activeSection === item.section
               const ItemIcon = item.Icon
@@ -164,16 +143,10 @@ export function Navigation() {
                     type="button"
                     aria-current={isActive ? 'page' : undefined}
                     onClick={() => openSection(item.section)}
-                    style={{
-                      padding: '8px 10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '10px',
-                      color: isActive ? '#c7f36b' : '#cbd5e1',
-                    }}
+                    title={item.labels[language]}
                   >
-                    <ItemIcon size={15} color={isActive ? '#c7f36b' : '#38bdf8'} style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: '0.82rem', fontWeight: isActive ? 600 : 400 }}>{item.labels[language]}</span>
+                    <ItemIcon size={15} className="nav-icon" color={isActive ? '#c7f36b' : '#38bdf8'} />
+                    <span className="nav-text">{item.labels[language]}</span>
                   </button>
                 </div>
               )
