@@ -18,7 +18,7 @@ export const desktopCameraPresets: Record<PortfolioSection, CameraPreset> = {
 }
 
 export const mobileCameraPresets: Record<PortfolioSection, CameraPreset> = {
-  overview: { position: [-78, 36, -75], target: [-11.8, 12.8, -23.570965], fov: 56 },
+  overview: { position: [-78, 36, -75], target: [-22.3, 12.3, -23.57], fov: 74 },
   about: { position: [-3, 20.4, -16], target: [10.4, 15.4, -12.1], fov: 32 },
   computerVision: { position: [-5, 21.5, -27], target: [8.8, 20.2, -23.2], fov: 34 },
   bms: { position: [-24, 17, -54], target: [6, 5.161307, -20.8], fov: 26 },

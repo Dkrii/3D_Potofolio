@@ -7,6 +7,7 @@ import { PortfolioPanel } from './components/panels/PortfolioPanel'
 import { DashboardHeader, StatusBar } from './components/ui/DashboardChrome'
 import { LoadingOverlay, SceneLoader } from './components/ui/Loading'
 import { SceneControls } from './components/ui/SceneControls'
+import { CameraDevControls } from './components/ui/CameraDevControls'
 import { Tooltip } from './components/ui/Tooltip'
 import { WebGLBoundary } from './components/ui/WebGLBoundary'
 import { PortfolioScene } from './scene/PortfolioScene'
@@ -172,6 +173,7 @@ function App() {
           )}
 
           {!isMobile && <SceneControls />}
+          <CameraDevControls />
           <p className="scene-hint">
             <span>Drag</span> orbit <span>Scroll</span> zoom <span>Right-drag</span> pan
           </p>

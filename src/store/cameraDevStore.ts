@@ -7,19 +7,6 @@ import {
 } from '../data/cameraPresets'
 import type { PortfolioSection } from './portfolioStore'
 
-const desktopStorageKey = 'portfolio-camera-presets-desktop-v3'
-const mobileStorageKey = 'portfolio-camera-presets-mobile-v3'
-
-const loadPresetsForMode = (mode: ViewportMode): Record<PortfolioSection, CameraPreset> => {
-  const defaults = mode === 'mobile' ? mobileCameraPresets : desktopCameraPresets
-  const key = mode === 'mobile' ? mobileStorageKey : desktopStorageKey
-  try {
-    return { ...defaults, ...JSON.parse(localStorage.getItem(key) ?? '{}') }
-  } catch {
-    return defaults
-  }
-}
-
 interface CameraDevState {
   viewportMode: ViewportMode
   desktopPresets: Record<PortfolioSection, CameraPreset>
@@ -37,8 +24,8 @@ interface CameraDevState {
 
 export const useCameraDevStore = create<CameraDevState>((set, get) => ({
   viewportMode: typeof window !== 'undefined' && window.innerWidth < 768 ? 'mobile' : 'desktop',
-  desktopPresets: loadPresetsForMode('desktop'),
-  mobilePresets: loadPresetsForMode('mobile'),
+  desktopPresets: { ...desktopCameraPresets },
+  mobilePresets: { ...mobileCameraPresets },
   currentView: desktopCameraPresets.overview,
   editMode: false,
   setViewportMode: (viewportMode) => {
@@ -51,11 +38,9 @@ export const useCameraDevStore = create<CameraDevState>((set, get) => ({
     const { viewportMode, desktopPresets, mobilePresets, currentView } = get()
     if (viewportMode === 'mobile') {
       const updated = { ...mobilePresets, [section]: currentView }
-      localStorage.setItem(mobileStorageKey, JSON.stringify(updated))
       set({ mobilePresets: updated })
     } else {
       const updated = { ...desktopPresets, [section]: currentView }
-      localStorage.setItem(desktopStorageKey, JSON.stringify(updated))
       set({ desktopPresets: updated })
     }
   },
@@ -63,11 +48,9 @@ export const useCameraDevStore = create<CameraDevState>((set, get) => ({
     const { viewportMode, desktopPresets, mobilePresets } = get()
     if (viewportMode === 'mobile') {
       const updated = { ...mobilePresets, [section]: preset }
-      localStorage.setItem(mobileStorageKey, JSON.stringify(updated))
       set({ mobilePresets: updated })
     } else {
       const updated = { ...desktopPresets, [section]: preset }
-      localStorage.setItem(desktopStorageKey, JSON.stringify(updated))
       set({ desktopPresets: updated })
     }
   },
@@ -75,11 +58,9 @@ export const useCameraDevStore = create<CameraDevState>((set, get) => ({
     const { viewportMode, desktopPresets, mobilePresets } = get()
     if (viewportMode === 'mobile') {
       const updated = { ...mobilePresets, [section]: mobileCameraPresets[section] }
-      localStorage.setItem(mobileStorageKey, JSON.stringify(updated))
       set({ mobilePresets: updated })
     } else {
       const updated = { ...desktopPresets, [section]: desktopCameraPresets[section] }
-      localStorage.setItem(desktopStorageKey, JSON.stringify(updated))
       set({ desktopPresets: updated })
     }
   },
@@ -88,4 +69,5 @@ export const useCameraDevStore = create<CameraDevState>((set, get) => ({
     return state.viewportMode === 'mobile' ? state.mobilePresets[section] : state.desktopPresets[section]
   },
 }))
+
 

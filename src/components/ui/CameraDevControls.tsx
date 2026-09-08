@@ -14,6 +14,7 @@ const labels: Record<PortfolioSection, string> = {
 
 export function CameraDevControls() {
   const [isVisible, setIsVisible] = useState(false)
+  const [copied, setCopied] = useState(false)
   const section = usePortfolioStore((state) => state.activeSection)
   const openSection = usePortfolioStore((state) => state.openSection)
   const closeSection = usePortfolioStore((state) => state.closeSection)
@@ -25,7 +26,6 @@ export function CameraDevControls() {
   const currentView = useCameraDevStore((state) => state.currentView)
   const editMode = useCameraDevStore((state) => state.editMode)
   const setEditMode = useCameraDevStore((state) => state.setEditMode)
-  const saveCurrentView = useCameraDevStore((state) => state.saveCurrentView)
   const updatePreset = useCameraDevStore((state) => state.updatePreset)
   const resetPreset = useCameraDevStore((state) => state.resetPreset)
 
@@ -37,6 +37,13 @@ export function CameraDevControls() {
     const vector = [...preset[key]] as [number, number, number]
     vector[index] = value
     updatePreset(section, { ...preset, [key]: vector })
+  }
+
+  const copyCode = () => {
+    const code = `// Paste into src/data/cameraPresets.ts -> ${viewportMode === 'mobile' ? 'mobileCameraPresets' : 'desktopCameraPresets'}.${section}\n${section}: {\n  position: [${preset.position.map((v) => Number(v.toFixed(2))).join(', ')}],\n  target: [${preset.target.map((v) => Number(v.toFixed(2))).join(', ')}],\n  fov: ${preset.fov},\n},`
+    navigator.clipboard.writeText(code)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   if (!isVisible) return <button className="camera-dev-toggle" type="button" onClick={() => setIsVisible(true)}>Camera editor</button>
@@ -58,14 +65,14 @@ export function CameraDevControls() {
           className={`mode-tab-btn ${viewportMode === 'desktop' ? 'active' : ''}`}
           onClick={() => setViewportMode('desktop')}
         >
-          🖥️ Desktop Mode
+          🖥️ Desktop
         </button>
         <button
           type="button"
           className={`mode-tab-btn ${viewportMode === 'mobile' ? 'active' : ''}`}
           onClick={() => setViewportMode('mobile')}
         >
-          📱 Mobile Mode
+          📱 Mobile
         </button>
       </div>
 
@@ -84,7 +91,7 @@ export function CameraDevControls() {
               {axis}
               <input
                 type="number"
-                step="0.1"
+                step="0.5"
                 value={Number(preset[key][index].toFixed(2))}
                 onChange={(event) => setVector(key, index, Number(event.target.value))}
               />
@@ -97,7 +104,7 @@ export function CameraDevControls() {
         FOV ({viewportMode})
         <input
           type="number"
-          min="15"
+          min="10"
           max="100"
           step="1"
           value={preset.fov}
@@ -105,17 +112,20 @@ export function CameraDevControls() {
         />
       </label>
 
-      <div className="camera-dev-readout">Live: {currentView.position.map((value) => value.toFixed(1)).join(', ')}</div>
+      <div className="camera-dev-readout">Live Pos: {currentView.position.map((value) => value.toFixed(1)).join(', ')}</div>
 
       <div className="camera-dev-actions">
-        <button type="button" onClick={() => saveCurrentView(section)}>Save {viewportMode}</button>
-        <button type="button" onClick={() => resetPreset(section)}>Reset {viewportMode}</button>
+        <button type="button" onClick={copyCode} style={{ background: '#38bdf8', color: '#080c0b', fontWeight: 'bold' }}>
+          {copied ? 'Copied Code!' : '📋 Copy Code'}
+        </button>
+        <button type="button" onClick={() => resetPreset(section)}>Reset</button>
       </div>
 
       <small>
-        {editMode ? `Editing ${viewportMode.toUpperCase()} camera. Save view when done.` : `Enable Edit to adjust ${viewportMode} framing.`}
+        {editMode ? `Editing ${viewportMode.toUpperCase()} camera live in-memory. Click Copy Code when done.` : `Enable Edit to orbit & tweak live.`}
       </small>
     </section>
   )
 }
+
 

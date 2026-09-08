@@ -47,14 +47,6 @@ export const defaultSceneSettings: SceneSettings = {
   },
 }
 
-const loadSceneSettings = (): SceneSettings => {
-  try {
-    return { ...defaultSceneSettings, ...JSON.parse(localStorage.getItem('portfolio-scene-settings') ?? '{}') }
-  } catch {
-    return defaultSceneSettings
-  }
-}
-
 interface PortfolioState {
   language: Language
   setLanguage: (lang: Language) => void
@@ -98,7 +90,7 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
   isPanelOpen: false,
   isSceneReady: false,
   performanceMode: window.devicePixelRatio > 1.5 ? 'reduced' : 'standard',
-  sceneSettings: loadSceneSettings(),
+  sceneSettings: { ...defaultSceneSettings },
   isSceneControlsOpen: false,
   telemetry: {
     temp: 21.8,
@@ -119,15 +111,10 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
       occupancyCount: Math.max(30, Math.min(50, state.telemetry.occupancyCount + (Math.random() > 0.5 ? 1 : -1))),
     },
   })),
-  setSceneSetting: (key, value) => set((state) => {
-    const sceneSettings = { ...state.sceneSettings, [key]: value }
-    localStorage.setItem('portfolio-scene-settings', JSON.stringify(sceneSettings))
-    return { sceneSettings }
-  }),
-  resetSceneSettings: () => {
-    localStorage.removeItem('portfolio-scene-settings')
-    set({ sceneSettings: defaultSceneSettings })
-  },
+  setSceneSetting: (key, value) => set((state) => ({
+    sceneSettings: { ...state.sceneSettings, [key]: value },
+  })),
+  resetSceneSettings: () => set({ sceneSettings: { ...defaultSceneSettings } }),
   toggleSceneControls: () => set((state) => ({ isSceneControlsOpen: !state.isSceneControlsOpen })),
   openSection: (activeSection) => set({ activeSection, activeBmsPart: activeSection === 'bms' ? 1 : null, isPanelOpen: true }),
   setBmsPart: (activeBmsPart) => set({ activeBmsPart, activeSection: 'bms', isPanelOpen: true }),
