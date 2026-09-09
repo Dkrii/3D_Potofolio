@@ -148,7 +148,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
         },
         {
           type: 'image',
-          title: 'Deteksi Lapangan & Kepatuhan K3',
+          title: 'Anotasi Menggunakan Roboflow YOLO26n',
           subtitle: 'Visualisasi Bounding Box (Helmet, Person, Vest)',
           src: '/showcase/computer-vision/detection-view.webp',
         },
@@ -369,7 +369,7 @@ export const portfolioContentI18n: Record<Language, Record<Exclude<PortfolioSect
         },
         {
           type: 'image',
-          title: 'Industrial Safety Compliance',
+          title: 'Annotation Using Roboflow YOLO26n',
           subtitle: 'Spatial Bounding Box (Helmet, Person, Vest)',
           src: '/showcase/computer-vision/detection-view.webp',
         },
