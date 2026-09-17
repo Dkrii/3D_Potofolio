@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { type HotspotOffset, type HotspotSection, type SceneSettings, usePortfolioStore } from '../../store/portfolioStore'
 import { useCameraDevStore } from '../../store/cameraDevStore'
 
-const sliders: { key: Exclude<keyof SceneSettings, 'background' | 'hotspotOffsets' | 'bmsFloorGap'>; label: string; min: number; max: number; step: number }[] = [
+const sliders: { key: Exclude<keyof SceneSettings, 'background' | 'hotspotOffsets'>; label: string; min: number; max: number; step: number }[] = [
   { key: 'exposure', label: 'Exposure', min: 0.2, max: 3.0, step: 0.05 },
   { key: 'ambient', label: 'Ambient', min: 0, max: 6, step: 0.1 },
   { key: 'hemisphere', label: 'Hemisphere', min: 0, max: 6, step: 0.1 },
@@ -44,7 +44,7 @@ export function SceneControls() {
   }
 
   const copyConfigCode = () => {
-    const code = `// Paste into src/store/portfolioStore.ts -> defaultSceneSettings\nexposure: ${settings.exposure.toFixed(2)},\nambient: ${settings.ambient.toFixed(1)},\nhemisphere: ${settings.hemisphere.toFixed(1)},\nkeyLight: ${settings.keyLight.toFixed(1)},\nfillLight: ${settings.fillLight.toFixed(1)},\noverlay: ${settings.overlay.toFixed(2)},\nbmsFloorGap: ${settings.bmsFloorGap.toFixed(2)},\nhotspotOffsets: ${JSON.stringify(settings.hotspotOffsets, null, 2)},`
+    const code = `// Paste into src/store/portfolioStore.ts -> defaultSceneSettings\nexposure: ${settings.exposure.toFixed(2)},\nambient: ${settings.ambient.toFixed(1)},\nhemisphere: ${settings.hemisphere.toFixed(1)},\nkeyLight: ${settings.keyLight.toFixed(1)},\nfillLight: ${settings.fillLight.toFixed(1)},\noverlay: ${settings.overlay.toFixed(2)},\nhotspotOffsets: ${JSON.stringify(settings.hotspotOffsets, null, 2)},`
     navigator.clipboard.writeText(code)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)

@@ -22,6 +22,12 @@ export function CameraController() {
 
   const activePresets = viewportMode === 'mobile' ? mobilePresets : desktopPresets
 
+  const viewSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => {
+    if (viewSyncTimerRef.current) clearTimeout(viewSyncTimerRef.current)
+  }, [])
+
   useEffect(() => {
     const orbit = controls.current
     if (!orbit) return
@@ -39,20 +45,13 @@ export function CameraController() {
       update()
     }
 
-    // Ultra-smooth custom cubic-bezier ease for cinema camera feel
     const customEase = 'power3.inOut'
 
-    // Responsive aspect ratio compensation:
-    // Standard desktop baseline is aspect ratio 16:9 (~1.77) and 16:10 (~1.60).
-    // On narrower laptop screens (1366x768 / 1280x800 / split-screen),
-    // dynamically adjust FOV so horizontal field-of-view stays constant and 3D objects don't get cropped.
     const aspect = size.width / Math.max(size.height, 1)
     let targetFov = preset.fov
     if (viewportMode === 'desktop') {
       const standardAspect = 1.77
       if (aspect < standardAspect) {
-        // Horizontal FOV preservation formula:
-        // tan(fov_v / 2) = tan(fov_standard / 2) * (standardAspect / aspect)
         const radFov = (preset.fov * Math.PI) / 180
         const compensatedRad = 2 * Math.atan(Math.tan(radFov / 2) * (standardAspect / aspect))
         targetFov = Math.min(85, Math.max(preset.fov, (compensatedRad * 180) / Math.PI))
@@ -94,16 +93,19 @@ export function CameraController() {
       targetTween.kill()
       fovTween?.kill()
     }
-  }, [activeSection, camera, invalidate, activePresets, size.width, size.height, viewportMode])
+  }, [activeSection, camera, invalidate, activePresets, viewportMode, size.width, size.height])
 
   const captureView = () => {
     const orbit = controls.current
-    if (!orbit || !(camera instanceof PerspectiveCamera)) return
-    setCurrentView({
-      position: [camera.position.x, camera.position.y, camera.position.z],
-      target: [orbit.target.x, orbit.target.y, orbit.target.z],
-      fov: camera.fov,
-    })
+    if (!editMode || !orbit || !(camera instanceof PerspectiveCamera) || viewSyncTimerRef.current) return
+    viewSyncTimerRef.current = setTimeout(() => {
+      viewSyncTimerRef.current = null
+      setCurrentView({
+        position: [camera.position.x, camera.position.y, camera.position.z],
+        target: [orbit.target.x, orbit.target.y, orbit.target.z],
+        fov: camera.fov,
+      })
+    }, 80)
   }
 
   return (

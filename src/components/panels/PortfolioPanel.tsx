@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowLeft, Briefcase, Code2, GraduationCap, Play, X, ZoomIn } from 'lucide-react'
 import { bmsPartDetails, portfolioContentI18n } from '../../data/portfolio'
 import type { MediaItem } from '../../data/portfolio'
-import type { BmsPart } from '../../store/portfolioStore'
 import { usePortfolioStore } from '../../store/portfolioStore'
 
 const sectionIds = { about: 'SEC-01', computerVision: 'SEC-02', bms: 'SEC-03', website: 'SEC-04', chatbot: 'SEC-05' }
@@ -10,8 +9,6 @@ const sectionIds = { about: 'SEC-01', computerVision: 'SEC-02', bms: 'SEC-03', w
 export function PortfolioPanel() {
   const language = usePortfolioStore((state) => state.language)
   const activeSection = usePortfolioStore((state) => state.activeSection)
-  const activeBmsPart = usePortfolioStore((state) => state.activeBmsPart)
-  const setBmsPart = usePortfolioStore((state) => state.setBmsPart)
   const isPanelOpen = usePortfolioStore((state) => state.isPanelOpen)
   const closeSection = usePortfolioStore((state) => state.closeSection)
   const telemetry = usePortfolioStore((state) => state.telemetry)
@@ -82,7 +79,7 @@ export function PortfolioPanel() {
 
   if (!isPanelOpen || activeSection === 'overview') return null
   const content = portfolioContentI18n[language][activeSection]
-  const currentBmsDetail = activeBmsPart ? bmsPartDetails[activeBmsPart] : bmsPartDetails[1]
+  const allBmsDetails = Object.values(bmsPartDetails)
 
   return (
     <>
@@ -145,7 +142,7 @@ export function PortfolioPanel() {
                             loop
                             muted
                             playsInline
-                            preload="auto"
+                            preload="none"
                             disablePictureInPicture
                             controlsList="nodownload noplaybackrate"
                             onContextMenu={(e) => e.preventDefault()}
@@ -363,34 +360,6 @@ export function PortfolioPanel() {
 
           {activeSection === 'bms' && (
             <>
-              {/* Part Selector */}
-              <div className="detail-block">
-                <h2>Select BMS Floor Part</h2>
-                <div className="bms-part-controls" aria-label="BMS part selector">
-                  {([1, 2, 3] as BmsPart[]).map((part) => (
-                    <button
-                      key={part}
-                      type="button"
-                      aria-pressed={activeBmsPart === part}
-                      onClick={() => setBmsPart(part)}
-                      style={{
-                        padding: '6px 12px',
-                        fontSize: '0.78rem',
-                        fontWeight: 600,
-                        borderRadius: '4px',
-                        border: activeBmsPart === part ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
-                        background: activeBmsPart === part ? 'rgba(56, 189, 248, 0.2)' : 'rgba(15, 23, 42, 0.6)',
-                        color: activeBmsPart === part ? '#38bdf8' : '#94a3b8',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s ease',
-                      }}
-                    >
-                      Part {String(part).padStart(2, '0')}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Simulated Live Telemetry Metrics */}
               <div className="detail-block">
                 <h2>Simulated IoT Telemetry</h2>
@@ -415,16 +384,16 @@ export function PortfolioPanel() {
               </div>
 
               {/* Zone Detail */}
-              {currentBmsDetail && (
-                <div className="detail-block" style={{ background: 'rgba(56, 189, 248, 0.04)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.15)' }}>
+              {allBmsDetails.map((detail) => (
+                <div key={detail.id} className="detail-block" style={{ background: 'rgba(56, 189, 248, 0.04)', padding: '12px', borderRadius: '8px', border: '1px solid rgba(56, 189, 248, 0.15)' }}>
                   <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#38bdf8', letterSpacing: '0.05em', fontWeight: 600 }}>
-                    {currentBmsDetail.zone}
+                    {detail.zone}
                   </div>
-                  <h3 style={{ margin: '4px 0 8px', fontSize: '1rem', color: '#fff' }}>{currentBmsDetail.name}</h3>
+                  <h3 style={{ margin: '4px 0 8px', fontSize: '1rem', color: '#fff' }}>{detail.name}</h3>
 
                   <h4 style={{ fontSize: '0.75rem', color: '#cbd5e1', margin: '8px 0 4px', textTransform: 'uppercase' }}>Simulated Sensors</h4>
                   <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 10px', display: 'grid', gap: '4px' }}>
-                    {currentBmsDetail.sensors.map((sensor) => (
+                    {detail.sensors.map((sensor) => (
                       <li key={sensor.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', background: 'rgba(0, 0, 0, 0.2)', padding: '4px 8px', borderRadius: '4px' }}>
                         <span style={{ color: '#94a3b8' }}>{sensor.label}</span>
                         <strong style={{ color: sensor.status === 'active' ? '#4ade80' : '#e2e8f0' }}>{sensor.value}</strong>
@@ -434,7 +403,7 @@ export function PortfolioPanel() {
 
                   <h4 style={{ fontSize: '0.75rem', color: '#cbd5e1', margin: '8px 0 4px', textTransform: 'uppercase' }}>CCTV Surveillance Feeds</h4>
                   <div style={{ display: 'grid', gap: '4px' }}>
-                    {currentBmsDetail.cctvFeeds.map((cam) => (
+                    {detail.cctvFeeds.map((cam) => (
                       <div key={cam.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(0, 0, 0, 0.3)', padding: '6px 8px', borderRadius: '4px', borderLeft: '3px solid #38bdf8' }}>
                         <div>
                           <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: '#38bdf8', marginRight: '6px' }}>{cam.id}</span>
@@ -447,7 +416,7 @@ export function PortfolioPanel() {
                     ))}
                   </div>
                 </div>
-              )}
+              ))}
             </>
           )}
         </>
