@@ -1,7 +1,6 @@
 import { create } from 'zustand'
 
 export type PortfolioSection = 'overview' | 'about' | 'computerVision' | 'bms' | 'website' | 'chatbot'
-export type BmsPart = 1 | 2 | 3
 export type Language = 'id' | 'en'
 
 export type HotspotSection = Exclude<PortfolioSection, 'overview'>
@@ -15,7 +14,6 @@ export interface SceneSettings {
   fillLight: number
   background: string
   overlay: number
-  bmsFloorGap: number
   hotspotOffsets: Record<HotspotSection, HotspotOffset>
 }
 
@@ -37,7 +35,6 @@ export const defaultSceneSettings: SceneSettings = {
   "fillLight": 0.5,
   "background": "#070b12",
   "overlay": 0.28,
-  "bmsFloorGap": 0.25,
   "hotspotOffsets": {
     "about": {
       "x": 0,
@@ -72,7 +69,6 @@ interface PortfolioState {
   setLanguage: (lang: Language) => void
   toggleLanguage: () => void
   activeSection: PortfolioSection
-  activeBmsPart: BmsPart | null
   hoveredObject: PortfolioSection | null
   isPanelOpen: boolean
   isSceneReady: boolean
@@ -85,7 +81,6 @@ interface PortfolioState {
   resetSceneSettings: () => void
   toggleSceneControls: () => void
   openSection: (section: Exclude<PortfolioSection, 'overview'>) => void
-  setBmsPart: (part: BmsPart | null) => void
   closeSection: () => void
   setHoveredObject: (section: PortfolioSection | null) => void
   setSceneReady: (ready: boolean) => void
@@ -105,7 +100,6 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
     })
   },
   activeSection: 'overview',
-  activeBmsPart: null,
   hoveredObject: null,
   isPanelOpen: false,
   isSceneReady: false,
@@ -136,9 +130,8 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
   })),
   resetSceneSettings: () => set({ sceneSettings: { ...defaultSceneSettings } }),
   toggleSceneControls: () => set((state) => ({ isSceneControlsOpen: !state.isSceneControlsOpen })),
-  openSection: (activeSection) => set({ activeSection, activeBmsPart: activeSection === 'bms' ? 1 : null, isPanelOpen: true }),
-  setBmsPart: (activeBmsPart) => set({ activeBmsPart, activeSection: 'bms', isPanelOpen: true }),
-  closeSection: () => set({ activeSection: 'overview', activeBmsPart: null, isPanelOpen: false }),
+  openSection: (activeSection) => set({ activeSection, isPanelOpen: true }),
+  closeSection: () => set({ activeSection: 'overview', isPanelOpen: false }),
   setHoveredObject: (hoveredObject) => set({ hoveredObject }),
   setSceneReady: (isSceneReady) => set({ isSceneReady }),
 }))

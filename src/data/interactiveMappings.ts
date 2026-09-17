@@ -1,4 +1,4 @@
-import type { BmsPart, PortfolioSection } from '../store/portfolioStore'
+import type { PortfolioSection } from '../store/portfolioStore'
 
 export interface InteractiveMapping {
   section: Exclude<PortfolioSection, 'overview'>
@@ -6,7 +6,6 @@ export interface InteractiveMapping {
   nodeLabel: string
   label: string
   status: 'ACTIVE' | 'ONLINE'
-  bmsPart?: BmsPart
 }
 
 export const interactiveMappings: InteractiveMapping[] = [
@@ -14,7 +13,5 @@ export const interactiveMappings: InteractiveMapping[] = [
   { section: 'computerVision', nodes: ['POTOFOLIO_COMPUTER_VISION', 'PORTOFOLIO_COMPUTER_VISION'], nodeLabel: 'COMPUTER VISION', label: 'Computer Vision', status: 'ONLINE' },
   { section: 'website', nodes: ['POTOFOLIO_WEBSITE', 'PORTOFOLIO_WEBSITE'], nodeLabel: 'WEBSITE', label: 'Website', status: 'ONLINE' },
   { section: 'chatbot', nodes: ['POTOFOLIO_CHATBOT', 'PORTOFOLIO_CHATBOT'], nodeLabel: 'CHATBOT', label: 'Chatbot', status: 'ONLINE' },
-  { section: 'bms', bmsPart: 1, nodes: ['POTOFOLIO_MINIATURE_01', 'PORTOFOLIO_MINIATURE_01'], nodeLabel: 'BMS PART 1', label: 'BMS Part 1', status: 'ACTIVE' },
-  { section: 'bms', bmsPart: 2, nodes: ['POTOFOLIO_MINIATURE_02', 'PORTOFOLIO_MINIATURE_02'], nodeLabel: 'BMS PART 2', label: 'BMS Part 2', status: 'ACTIVE' },
-  { section: 'bms', bmsPart: 3, nodes: ['POTOFOLIO_MINIATURE_03', 'PORTOFOLIO_MINIATURE_03'], nodeLabel: 'BMS PART 3', label: 'BMS Part 3', status: 'ACTIVE' },
+  { section: 'bms', nodes: ['POTOFOLIO_MINIATURE_01', 'PORTOFOLIO_MINIATURE_01', 'POTOFOLIO_MINIATURE_02', 'PORTOFOLIO_MINIATURE_02', 'POTOFOLIO_MINIATURE_03', 'PORTOFOLIO_MINIATURE_03'], nodeLabel: 'BMS', label: 'BMS', status: 'ACTIVE' },
 ]

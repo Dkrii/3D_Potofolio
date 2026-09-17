@@ -80,7 +80,7 @@ export function DashboardHeader() {
         </div>
 
         <a
-          href="https://github.com"
+          href="https://github.com/dkrii"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="GitHub Profile"
@@ -178,11 +178,11 @@ export function DashboardHeader() {
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <FileText size={16} color="#080c0b" />
-                <span>{isId ? 'Unduh CV (ATS)' : 'Download CV (ATS)'}</span>
+                <span>{isId ? 'Unduh CV' : 'Download CV'}</span>
               </a>
 
               <a
-                href="https://github.com"
+                href="https://github.com/dkrii"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mobile-sheet-github-btn"

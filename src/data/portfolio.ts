@@ -1,14 +1,14 @@
-import type { BmsPart, PortfolioSection, Language } from '../store/portfolioStore'
+import type { PortfolioSection, Language } from '../store/portfolioStore'
 
 export interface BmsPartDetail {
-  id: BmsPart
+  id: number
   name: string
   zone: string
   sensors: { label: string; value: string; status: 'normal' | 'active' }[]
   cctvFeeds: { id: string; location: string; status: 'LIVE' | 'REC'; fps: number }[]
 }
 
-export const bmsPartDetails: Record<BmsPart, BmsPartDetail> = {
+export const bmsPartDetails: Record<number, BmsPartDetail> = {
   1: {
     id: 1,
     name: 'Zone A - Main Atrium & HVAC',

@@ -78,6 +78,9 @@ export const cameraPresets = desktopCameraPresets
   }
 }
 
+// Chunks that should NOT be eagerly modulepreloaded — they belong to the lazy PortfolioScene
+const DEFERRED_CHUNKS = ['three-core', 'drei-vendor', 'r3f-vendor', 'gsap-vendor']
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), codeDirectSaverPlugin()],
@@ -85,8 +88,14 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('three') || id.includes('@react-three')) {
-            return 'three-vendor'
+          if (id.includes('node_modules/three/')) {
+            return 'three-core'
+          }
+          if (id.includes('@react-three/drei')) {
+            return 'drei-vendor'
+          }
+          if (id.includes('@react-three/fiber')) {
+            return 'r3f-vendor'
           }
           if (id.includes('gsap')) {
             return 'gsap-vendor'
@@ -94,7 +103,16 @@ export default defineConfig({
           if (id.includes('lucide-react')) {
             return 'icons-vendor'
           }
+          if (id.includes('zustand')) {
+            return 'state-vendor'
+          }
         },
+      },
+    },
+    modulePreload: {
+      // Only preload small critical chunks; skip heavy 3D vendor chunks
+      resolveDependencies(_url, deps) {
+        return deps.filter((dep) => !DEFERRED_CHUNKS.some((chunk) => dep.includes(chunk)))
       },
     },
     chunkSizeWarningLimit: 1000,

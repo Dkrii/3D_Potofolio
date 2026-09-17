@@ -1,18 +1,15 @@
-import { Canvas } from '@react-three/fiber'
-import { Suspense, useEffect, useState, type CSSProperties } from 'react'
+import { Suspense, lazy, useEffect, useState, type CSSProperties } from 'react'
 import { Sparkles, ArrowLeft, Monitor, X } from 'lucide-react'
 import './App.css'
 import { Navigation, projectConfig } from './components/navigation/Navigation'
-import { PortfolioPanel } from './components/panels/PortfolioPanel'
 import { DashboardHeader, StatusBar } from './components/ui/DashboardChrome'
 import { LoadingOverlay, SceneLoader } from './components/ui/Loading'
-import { SceneControls } from './components/ui/SceneControls'
-import { CameraDevControls } from './components/ui/CameraDevControls'
 import { Tooltip } from './components/ui/Tooltip'
-import { WebGLBoundary } from './components/ui/WebGLBoundary'
-import { PortfolioScene } from './scene/PortfolioScene'
 import { usePortfolioStore } from './store/portfolioStore'
 import { useCameraDevStore } from './store/cameraDevStore'
+
+const SceneCanvas = lazy(() => import('./components/SceneCanvas').then((m) => ({ default: m.SceneCanvas })))
+const PortfolioPanel = lazy(() => import('./components/panels/PortfolioPanel').then((m) => ({ default: m.PortfolioPanel })))
 
 function App() {
   const language = usePortfolioStore((state) => state.language)
@@ -27,6 +24,7 @@ function App() {
   // Mobile Viewport detection (<768px)
   const [isMobile, setIsMobile] = useState(() => (typeof window !== 'undefined' ? window.innerWidth < 768 : false))
   const [showMobile3D, setShowMobile3D] = useState(false)
+  const [sceneBooted, setSceneBooted] = useState(false)
 
   // Mobile First-Time Recommendation Modal State (Show when in mobile view)
   const [showMobileNotice, setShowMobileNotice] = useState(() => {
@@ -51,6 +49,16 @@ function App() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  useEffect(() => {
+    if (isMobile && (!showMobile3D || isPanelOpen)) {
+      const resetTimer = window.setTimeout(() => setSceneBooted(false), 0)
+      return () => window.clearTimeout(resetTimer)
+    }
+
+    const bootTimer = window.setTimeout(() => setSceneBooted(true), isMobile ? 0 : 1200)
+    return () => window.clearTimeout(bootTimer)
+  }, [isMobile, isPanelOpen, showMobile3D])
+
   const dismissMobileNotice = (launch3D = false) => {
     setShowMobileNotice(false)
     if (launch3D) {
@@ -59,7 +67,7 @@ function App() {
   }
 
   // If on desktop, reset showMobile3D
-  const shouldRender3D = !isMobile || (showMobile3D && !isPanelOpen)
+  const shouldShowSceneWorkspace = !isMobile || (showMobile3D && !isPanelOpen)
 
   return (
     <main className="app-shell" style={{ '--scene-overlay': overlay } as CSSProperties}>
@@ -122,7 +130,7 @@ function App() {
       </aside>
 
       {/* Desktop 3D Canvas OR Fullscreen Mobile 3D Orbit Scene */}
-      {shouldRender3D && (
+      {shouldShowSceneWorkspace && (
         <section className={`scene-workspace ${isMobile && showMobile3D ? 'mobile-3d-fullscreen' : ''}`} aria-label="Interactive 3D portfolio model">
           {/* Mobile Back Button to Card List */}
           {isMobile && showMobile3D && (
@@ -137,25 +145,11 @@ function App() {
             </button>
           )}
 
-          <WebGLBoundary>
-            <Canvas
-              className={`scene-canvas-element ${isSceneReady ? 'canvas-ready' : 'canvas-loading'}`}
-              camera={{ position: [-64.8, 29, -62.4], fov: 44, near: 0.1, far: 500 }}
-              dpr={isMobile ? [1, 1.25] : [1, Math.min(window.devicePixelRatio || 1, 1.5)]}
-              gl={{
-                antialias: true,
-                powerPreference: 'high-performance',
-                precision: 'highp',
-                stencil: false,
-                depth: true,
-              }}
-              frameloop={isPanelOpen && !isMobile ? 'demand' : 'always'}
-            >
-              <Suspense fallback={<SceneLoader />}>
-                <PortfolioScene />
-              </Suspense>
-            </Canvas>
-          </WebGLBoundary>
+          {sceneBooted && (
+            <Suspense fallback={<SceneLoader />}>
+              <SceneCanvas isMobile={isMobile} isSceneReady={isSceneReady} />
+            </Suspense>
+          )}
 
           {!isMobile && (
             <div className="viewport-label">
@@ -178,9 +172,6 @@ function App() {
             </div>
           )}
 
-          {/* Scene & Camera Dev Controls (Render in dev mode & on desktop) */}
-          {(import.meta.env.DEV || !isMobile) && <SceneControls />}
-          {import.meta.env.DEV && <CameraDevControls />}
           <p className="scene-hint">
             <span>Drag</span> orbit <span>Scroll</span> zoom <span>Right-drag</span> pan
           </p>
@@ -244,7 +235,9 @@ function App() {
 
       {/* Project Detail Takeover Modal Layer */}
       <section id="main-content" className={`content-layer ${isMobile && isPanelOpen ? 'mobile-modal-takeover' : ''}`}>
-        <PortfolioPanel />
+        <Suspense fallback={null}>
+          <PortfolioPanel />
+        </Suspense>
       </section>
 
       <Tooltip />
