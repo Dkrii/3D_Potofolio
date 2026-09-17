@@ -102,6 +102,19 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--acid) !importan
 .scene-canvas-element.canvas-ready {
   opacity: 1;
 }
+.webgl-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--muted);
+  text-align: center;
+  font: .72rem/1.5 var(--mono);
+}
+.webgl-fallback strong { color: var(--ink); font-size: .82rem; }
 
 /* Cyberpunk Scene Loading Overlay */
 .loading-overlay {
