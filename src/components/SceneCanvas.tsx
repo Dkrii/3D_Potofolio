@@ -1,8 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense, useState } from 'react'
-import { CameraDevControls } from './ui/CameraDevControls'
 import { SceneLoader } from './ui/Loading'
-import { SceneControls } from './ui/SceneControls'
 import { WebGLBoundary } from './ui/WebGLBoundary'
 import { PortfolioScene } from '../scene/PortfolioScene'
 
@@ -56,9 +54,6 @@ export function SceneCanvas({ isMobile, isSceneReady }: SceneCanvasProps) {
           </Suspense>
         </Canvas>
       </WebGLBoundary>
-
-      {(import.meta.env.DEV || !isMobile) && <SceneControls />}
-      {import.meta.env.DEV && <CameraDevControls />}
     </>
   )
 }
