@@ -1,9 +1,9 @@
-import { Suspense, lazy, useEffect, useState, type CSSProperties } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { Sparkles, ArrowLeft, Monitor, X } from 'lucide-react'
 import './App.css'
 import { Navigation, projectConfig } from './components/navigation/Navigation'
 import { DashboardHeader, StatusBar } from './components/ui/DashboardChrome'
-import { LoadingOverlay, SceneLoader } from './components/ui/Loading'
+import { LoadingOverlay, Mobile3DLoader, SceneLoader } from './components/ui/Loading'
 import { Tooltip } from './components/ui/Tooltip'
 import { usePortfolioStore } from './store/portfolioStore'
 import { useCameraDevStore } from './store/cameraDevStore'
@@ -29,20 +29,42 @@ function App() {
   // Mobile First-Time Recommendation Modal State (Show when in mobile view)
   const [showMobileNotice, setShowMobileNotice] = useState(() => {
     if (typeof window === 'undefined') return false
-    return window.innerWidth < 768
+    if (window.innerWidth >= 768) return false
+    try {
+      return !window.sessionStorage.getItem('mobile-notice-dismissed')
+    } catch {
+      return true
+    }
   })
+  const prevIsMobileRef = useRef(typeof window !== 'undefined' ? window.innerWidth < 768 : false)
+  const [isClosingNotice, setIsClosingNotice] = useState(false)
+  const noticeCloseTimeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768
+      const wasMobile = prevIsMobileRef.current
+      prevIsMobileRef.current = mobile
       setIsMobile(mobile)
       useCameraDevStore.getState().setViewportMode(mobile ? 'mobile' : 'desktop')
 
-      // When switching to mobile dynamically in Inspect Element
-      if (mobile) {
-        setShowMobileNotice(true)
-      } else {
+      // Only show on desktop -> mobile transition, never on mobile -> mobile
+      // (scroll triggers resize via address bar, must not retrigger modal)
+      if (!mobile) {
         setShowMobileNotice(false)
+        try {
+          window.sessionStorage.removeItem('mobile-notice-dismissed')
+        } catch {
+          /* ponytail: storage unavailable, modal shows every entry */
+        }
+      } else if (!wasMobile) {
+        let dismissed = false
+        try {
+          dismissed = !!window.sessionStorage.getItem('mobile-notice-dismissed')
+        } catch {
+          /* ponytail: storage unavailable, modal shows every entry */
+        }
+        if (!dismissed) setShowMobileNotice(true)
       }
     }
     window.addEventListener('resize', handleResize)
@@ -59,12 +81,42 @@ function App() {
     return () => window.clearTimeout(bootTimer)
   }, [isMobile, isPanelOpen, showMobile3D])
 
-  const dismissMobileNotice = (launch3D = false) => {
-    setShowMobileNotice(false)
-    if (launch3D) {
-      setShowMobile3D(true)
+  const dismissMobileNotice = useCallback((launch3D = false) => {
+    if (isClosingNotice || !showMobileNotice) return
+    setIsClosingNotice(true)
+    if (noticeCloseTimeoutRef.current) {
+      window.clearTimeout(noticeCloseTimeoutRef.current)
     }
-  }
+    noticeCloseTimeoutRef.current = window.setTimeout(() => {
+      setShowMobileNotice(false)
+      setIsClosingNotice(false)
+      try {
+        window.sessionStorage.setItem('mobile-notice-dismissed', '1')
+      } catch {
+        /* ponytail: storage unavailable, modal shows every entry */
+      }
+      if (launch3D) {
+        setShowMobile3D(true)
+      }
+    }, 200) // match noticeOut duration
+  }, [isClosingNotice, showMobileNotice])
+
+  useEffect(() => {
+    return () => {
+      if (noticeCloseTimeoutRef.current) {
+        window.clearTimeout(noticeCloseTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!showMobileNotice || isClosingNotice) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismissMobileNotice(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [showMobileNotice, isClosingNotice, dismissMobileNotice])
 
   // If on desktop, reset showMobile3D
   const shouldShowSceneWorkspace = !isMobile || (showMobile3D && !isPanelOpen)
@@ -75,8 +127,17 @@ function App() {
 
       {/* Mobile Desktop Recommendation Pop-up Modal */}
       {showMobileNotice && (
-        <div className="mobile-notice-backdrop" onClick={() => dismissMobileNotice(false)}>
-          <div className="mobile-notice-card" onClick={(e) => e.stopPropagation()}>
+        <div
+          className={`mobile-notice-backdrop ${isClosingNotice ? 'notice-exit' : 'notice-enter'}`}
+          onClick={() => dismissMobileNotice(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="mobile-notice-title"
+        >
+          <div
+            className={`mobile-notice-card ${isClosingNotice ? 'notice-card-exit' : 'notice-card-enter'}`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               type="button"
               className="mobile-notice-close-btn"
@@ -86,18 +147,18 @@ function App() {
               <X size={18} />
             </button>
 
-            <div className="mobile-notice-icon-wrapper">
+            <div className="mobile-notice-icon-wrapper notice-stagger" style={{ '--notice-delay': '60ms' } as CSSProperties}>
               <Monitor size={28} color="#38bdf8" />
             </div>
 
-            <span className="mobile-notice-badge">OPTIMAL VIEW RECOMMENDATION</span>
-            <h3 className="mobile-notice-title">Pengalaman Terbaik di Desktop</h3>
-            
-            <p className="mobile-notice-text">
+            <span className="mobile-notice-badge notice-stagger" style={{ '--notice-delay': '110ms' } as CSSProperties}>OPTIMAL VIEW RECOMMENDATION</span>
+            <h3 className="mobile-notice-title notice-stagger" id="mobile-notice-title" style={{ '--notice-delay': '160ms' } as CSSProperties}>Pengalaman Terbaik di Desktop</h3>
+
+            <p className="mobile-notice-text notice-stagger" style={{ '--notice-delay': '210ms' } as CSSProperties}>
               Website ini dilengkapi <strong>Interactive 3D WebGL Room & Spatial Camera</strong> yang dirancang maksimal untuk layar <strong>Desktop / Laptop</strong>.
             </p>
 
-            <div className="mobile-notice-actions">
+            <div className="mobile-notice-actions notice-stagger" style={{ '--notice-delay': '260ms' } as CSSProperties}>
               <button
                 type="button"
                 className="mobile-notice-primary-btn"
@@ -146,10 +207,12 @@ function App() {
           )}
 
           {sceneBooted && (
-            <Suspense fallback={<SceneLoader />}>
+            <Suspense fallback={isMobile ? <Mobile3DLoader /> : <SceneLoader />}>
               <SceneCanvas isMobile={isMobile} isSceneReady={isSceneReady} />
             </Suspense>
           )}
+
+          {isMobile && showMobile3D && !isSceneReady && <Mobile3DLoader />}
 
           {!isMobile && (
             <div className="viewport-label">
