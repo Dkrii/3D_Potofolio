@@ -1,72 +1,68 @@
-# 🌐 3D Interactive Isometric Portfolio — Dikri Ali
+# 3D Interactive Isometric Portfolio — Dikri Ali
 
-> An immersive, cyberpunk/HUD-inspired 3D WebGL developer portfolio built with **React 19**, **Three.js / React Three Fiber (R3F)**, **GSAP**, and **Tailwind-free high-performance CSS**.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-portofolio.dikri.workers.dev-blue?style=flat-square)](https://portofolio.dikri.workers.dev/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=flat-square)](./LICENSE)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-WebGL-black?style=flat-square&logo=threedotjs)](https://threejs.org/)
+[![Cloudflare Pages](https://img.shields.io/badge/Deployed-Cloudflare%20Pages-orange?style=flat-square&logo=cloudflare)](https://portofolio.dikri.workers.dev/)
 
----
+Cyberpunk/HUD-inspired developer portfolio built as a fully interactive 3D isometric room. Click on objects in the room to navigate between portfolio sections. No page reloads.
 
-## ✨ Features
+## Live Demo
 
-- **🎮 Interactive 3D Room & Hotspot Navigation**: Full 3D isometric room model with interactive GLTF objects and raycasted floating HUD tags.
-- **🎥 Smooth Cinema Camera Animations**: Custom GSAP cubic-bezier (`power3.inOut`) camera choreography transitioning seamlessly across portfolio focus zones.
-- **📱 True Multi-Device Responsive Architecture**:
-  - **Desktop (1440px - 4K)**: Full HUD dashboard, 240px dock, wide media drawers, real-time lighting & camera inspection tool.
-  - **Tablet & iPad (768px - 1366px Portrait/Landscape)**: Dynamic aspect-ratio FOV compensation, compact vertical dock, collision-free hero positioning, `100dvh` viewport support.
-  - **Mobile (< 768px)**: Optimized lightweight performance mode, gesture-friendly carousel, touch prevention, responsive modal view.
-- **⚡ High-Performance WebGL Engine**:
-  - Pre-warmed shader compilation (`gl.compile`) to eliminate runtime frame drops and long tasks.
-  - Adaptive device-pixel ratio (DPR: 1.0 - 1.5).
-  - Smart canvas frameloop (`always` during 3D navigation, throttled to `demand` during detail inspection).
-  - Sub-50ms INP and lightweight GPU memory footprint.
-- **🎬 Multimedia Showcase & Custom Lightbox**: Autoplaying responsive video showcases, screenshot viewer, non-destructive modal transitions, and right-click asset protection.
-- **🌐 Bilingual Internationalization (i18n)**: Seamless English (EN) and Indonesian (ID) language toggle with zero layout shift.
-- **🛠️ Integrated Developer Tools**: Built-in in-memory Camera Presets Editor & Scene Lighting controls with direct Vite backend code persistence.
+**[portofolio.dikri.workers.dev](https://portofolio.dikri.workers.dev/)**
 
----
+## Features
 
-## 🛠️ Tech Stack
+- **Interactive 3D Room**: Isometric GLTF room model with raycasted hotspot tags on clickable objects. Each object links to a portfolio section.
+- **Cinematic Camera System**: GSAP cubic-bezier (`power3.inOut`) camera transitions between focus zones, no jarring cuts.
+- **Responsive across all devices**:
+  - Desktop (1440px+): full HUD dashboard, 240px dock, wide media drawers, real-time lighting and camera inspector.
+  - Tablet (768px–1366px): dynamic FOV compensation for portrait/landscape, compact dock, `100dvh` viewport support.
+  - Mobile (<768px): lightweight performance mode, gesture-friendly carousel, touch-optimized modal.
+- **WebGL Performance**:
+  - Pre-warmed shader compilation (`gl.compile`) to prevent frame drops on load.
+  - Adaptive DPR (1.0–1.5) based on device capability.
+  - Canvas frameloop switches between `always` (3D navigation) and `demand` (detail view) to cut GPU usage.
+  - Sub-50ms INP target.
+- **Media Lightbox**: Autoplaying video showcases, screenshot viewer, non-destructive modal transitions, right-click asset protection.
+- **Bilingual (EN/ID)**: Language toggle between English and Indonesian with zero layout shift.
+- **Built-in Dev Tools**: In-memory camera presets editor and scene lighting controls, with direct Vite backend code persistence.
 
-- **Core**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/)
-- **3D / Graphics**: [Three.js](https://threejs.org/), [@react-three/fiber (R3F)](https://docs.pmnd.rs/react-three-fiber), [@react-three/drei](https://github.com/pmndrs/drei)
-- **Animation**: [GSAP 3](https://greensock.com/gsap/)
-- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Hosting / Edge**: [Cloudflare Pages](https://pages.cloudflare.com/) / [Wrangler](https://developers.cloudflare.com/workers/wrangler/)
+## Tech Stack
 
----
+| Category | Libraries |
+|---|---|
+| Core | [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/) |
+| 3D / Graphics | [Three.js](https://threejs.org/), [React Three Fiber](https://docs.pmnd.rs/react-three-fiber), [Drei](https://github.com/pmndrs/drei) |
+| Animation | [GSAP 3](https://greensock.com/gsap/) |
+| State | [Zustand](https://github.com/pmndrs/zustand) |
+| Icons | [Lucide React](https://lucide.dev/) |
+| Hosting | [Cloudflare Pages](https://pages.cloudflare.com/) + [Wrangler](https://developers.cloudflare.com/workers/wrangler/) |
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Prerequisites
-- Node.js `v18.0+`
-- npm `v9.0+`
+**Prerequisites:** Node.js `v18+`, npm `v9+`
 
-### 2. Installation
 ```bash
-# Clone the repository
 git clone https://github.com/Dkrii/3D_Potofolio.git
-
-# Navigate into project directory
 cd 3D_Potofolio
-
-# Install dependencies
 npm install
 ```
 
-### 3. Run Development Server
 ```bash
 npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
 
-### 4. Build for Production
+Open [http://localhost:5173](http://localhost:5173).
+
 ```bash
 npm run build
 ```
-Production artifacts will be generated in the `dist/` directory.
 
----
+Output goes to `dist/`.
 
-## 🧭 Project Architecture
+## Project Architecture
 
 ```
 3D_Portofolio/
@@ -97,27 +93,22 @@ Production artifacts will be generated in the `dist/` directory.
 └── wrangler.toml             # Cloudflare Pages deployment configuration
 ```
 
----
+## Deployment (Cloudflare Pages)
 
-## 🚢 Deployment (Cloudflare Pages)
+```bash
+git checkout dev
+# ... commit changes ...
+git push origin dev
+```
 
-### Merge & Deploy Workflow
-1. Make changes on the development branch:
-   ```bash
-   git checkout dev
-   # ... commit changes ...
-   git push origin dev
-   ```
-2. Test on Cloudflare Preview deployment.
-3. Merge into `main` to update production domain:
-   ```bash
-   git checkout main
-   git merge dev
-   git push origin main
-   ```
+Test on the Cloudflare preview URL, then merge to production:
 
----
+```bash
+git checkout main
+git merge dev
+git push origin main
+```
 
-## 📄 License
+## License
 
 MIT © [Dikri Ali](https://github.com/Dkrii/3D_Potofolio)
